@@ -1,0 +1,67 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: stocksvision
+  labels:
+    app: stocksvision
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  template:
+    metadata:
+      labels:
+        app: stocksvision
+    spec:
+      containers:
+# webui              
+        - name: webui
+          image: kristianwindsor/stocksvision-webui
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: 20m
+# backend              
+        - name: backend
+          image: kristianwindsor/stocksvision-backend
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: 20m
+# crawler              
+        - name: crawler
+          image: kristianwindsor/stocksvision-crawler
+          resources:
+            requests:
+              cpu: 20m
+# mysql              
+        - name: mysql
+          image: kristianwindsor/stocksvision-mysql
+          ports:
+            - containerPort: 3306
+          resources:
+            requests:
+              cpu: 20m
+          volumeMounts:
+           - name: stocksvision-mysql
+             mountPath: /var/lib/mysql
+# phpmyadmin              
+        - name: phpmyadmin
+          image: phpmyadmin/phpmyadmin
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              cpu: 20m
+#
+      imagePullSecrets:
+        - name: dockerhub
+      volumes:
+       - name: stocksvision-mysql
+         persistentVolumeClaim:
+           claimName: stocksvision-mysql
