@@ -9,18 +9,81 @@
 		<meta name="description" content="Stocks Vision">
 		<meta name="viewport" content="width=device-width,initial-scale=1.0">
 	</head>
-	<body>
-		<h1>
-			Stocks Vision
-		</h1>
-		<div>
+	<body><!--
+	 --><div class="fourth input">
+			<h1>
+				Stocks Vision
+			</h1>
 			<div>
 				<span>Stock: </span>
-				<input type="text" />
+				<input type="text" value="AAPL" />
 			</div>
 			<div>
 				<span>Hold For: </span>
-				<input type="text" />
+				<input type="text" value="2 weeks" />
+			</div>
+			<div>
+				<span>Spendable Cash: </span>
+				<input type="text" value="$1000" />
+			</div>
+			<button>
+				Stop Analyzing
+			</button>
+		</div><!--
+	 --><div class="fourth output">
+			<div>
+				<h2>Output</h2>
+				<p style="font-size: 38px">
+					Buy 2 shares 
+				</p>
+			</div>
+			<div>
+				<p>
+					0.08371 + 0.01 / 0.8 + 0.2 = 0.09371
+				</p>
+				<p>
+					$1000 * 0.09371 = $93.71
+				</p>
+				<p>
+					$93.71 / $42.56 = 2 shares
+				</p>
+				<p>
+					Buy 2 shares of MU at $42.56
+				</p>
+			</div>
+		</div><!--
+	 --><div class="fourth indicators">
+			<div>
+				<h2>Indicators</h2>
+				<p>
+					The variables that produce the above results.
+				</p>
+				<a>Edit Indicators</a>
+				<a>Set Indicators from successful simulations</a>
+				<div>
+					<div class="layer">
+						<input type="checkbox" />
+						<p>
+							Reddit Sentiment
+						</p>
+						<input type="range" />
+					</div>
+				</div>
+				<div>
+					<div class="layer">
+						<input type="checkbox" />
+						<p>
+							Open/Close Ratio
+						</p>
+						<input type="range" />
+					</div>
+				</div>
+			</div>
+		</div><!--
+	 --><div class="fourth simulations">
+			<div>
+				<h2>Simulations</h2>
+				<img src="https://i.pinimg.com/236x/e0/50/7f/e0507f9c78708dcce6948ecabb80cbc4--free-stock-trading-android-apps.jpg" />
 			</div>
 		</div>
 	</body>

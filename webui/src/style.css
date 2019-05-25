@@ -1,0 +1,41 @@
+html, body {
+	margin: 0;
+	height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.fourth {
+	display: inline-block;
+	width: 50%;
+	height: 50%;
+	padding: 3% 6%;
+	vertical-align: top;
+	border: 1px solid #ccc;
+}
+
+.fourth.input input {
+	font-size: 42px;
+}
+
+.fourth input {
+	width: 100%;
+}
+
+.layer {
+	
+}
+
+.layer input {
+	width: 55px;
+}
+
+.layer p {
+	display: inline-block;
+}
+
+.layer {
+	
+}
