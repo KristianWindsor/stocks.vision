@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: sparkmenu-ingress
+  name: stocksvision
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
@@ -35,5 +35,7 @@ spec:
           servicePort: 8080
   tls:
   - hosts:
-    - spark.menu
-    secretName: sparkmenu
+    - stocks.vision
+    - api.stocks.vision
+    - phpmyadmin.stocks.vision
+    secretName: stocksvision

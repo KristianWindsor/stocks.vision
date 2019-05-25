@@ -40,16 +40,16 @@ spec:
             requests:
               cpu: 20m
 # mysql              
-        - name: mysql
-          image: kristianwindsor/stocksvision-mysql
-          ports:
-            - containerPort: 3306
-          resources:
-            requests:
-              cpu: 20m
-          volumeMounts:
-           - name: stocksvision-mysql
-             mountPath: /var/lib/mysql
+        # - name: mysql
+        #   image: kristianwindsor/stocksvision-mysql
+        #   ports:
+        #     - containerPort: 3306
+        #   resources:
+        #     requests:
+        #       cpu: 20m
+        #   volumeMounts:
+        #    - name: stocksvision-mysql
+        #      mountPath: /var/lib/mysql
 # phpmyadmin              
         - name: phpmyadmin
           image: phpmyadmin/phpmyadmin
