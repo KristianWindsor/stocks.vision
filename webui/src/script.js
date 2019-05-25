@@ -48,7 +48,8 @@ function simulation() {
 		data: { 
 			'stock': stock,
 			'holdDuration': holdDuration, 
-			'indicators': indicators
+			'indicators': indicators,
+			'completedSimulations': completedSimulations
 		},
 		success: function(msg){
 			console.log("horray! " + msg);
