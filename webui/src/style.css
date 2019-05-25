@@ -15,8 +15,14 @@ html, body {
 	vertical-align: top;
 	border: 1px solid #ccc;
 }
+.fourth.indicators, .fourth.simulations {
+	min-height: 61.8vh;
+}
 
-.fourth.input input {
+.fourth.input>div {
+	margin: 20px 0;
+}
+.fourth.input input, .fourth.input button {
 	font-size: 42px;
 }
 
@@ -24,12 +30,20 @@ html, body {
 	width: 100%;
 }
 
+.fourth.indicators .layer {
+	display: table;
+	width: 100%;
+}
+.fourth.indicators .layer>* {
+	display: table-cell;
+	text-align: center;
+}
+
 .layer {
-	
+	margin: 20px 0;
 }
 
 .layer input {
-	width: 55px;
 }
 
 .layer p {
