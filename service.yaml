@@ -12,5 +12,5 @@ spec:
       port: 80
     - name: backend
       port: 5000
-    - name: phpmyadmin
-      port: 8080
+    - name: mysql
+      port: 3306
