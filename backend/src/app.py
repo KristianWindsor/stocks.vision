@@ -3,6 +3,7 @@ from flask import Flask
 from flask import jsonify
 from flask import request
 from flask_cors import CORS, cross_origin
+import indicators.example
 
 app = Flask(__name__)
 CORS(app)
@@ -26,7 +27,8 @@ def indicator():
 	stock = request.form.get('stock')
 	# run indicator py script with given stock
 	# return results
-	return '200 OK'
+	results = indicators.example.main('AAPL')
+	return results
 
 
 #
