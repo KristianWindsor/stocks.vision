@@ -1,13 +1,13 @@
 
-var isAnalyzing = true;
+var isAnalyzing = false;
 function startAnalyzing() {
 	$('.fourth.indicators input[type="range"]').prop('disabled', true);
 	simulation();
-	$('#analyze').html('Stop Analyzing');
+	$('#simulationButton').html('Stop Simulations');
 }
 function stopAnalyzing() {
 	$('.fourth.indicators input[type="range"]').prop('disabled', false);
-	$('#analyze').html('Start Analyzing');
+	$('#simulationButton').html('Run Simulations');
 }
 
 
@@ -20,7 +20,7 @@ function doMath() {
 }
 
 function indicator() {
-	var indicator,
+	var indicator = 'reddit-sentiment',
 		stock = $('#stock').val();
 
 	$.ajax({
@@ -40,7 +40,8 @@ function indicator() {
 function simulation() {
 	var stock = $('#stock').val(),
 		holdDuration = $('#holdDuration').val(),
-		indicators = {};
+		indicators = {}
+		completedSimulations = '';
 
 	$.ajax({
 		type: 'POST',
@@ -73,7 +74,7 @@ $('#spendableCash').on('input', function() {
 		doMath();
 	}
 });
-$("#analyze").click(function() {
+$("#simulationButton").click(function() {
 	if (isAnalyzing == true) {
 		isAnalyzing = false;
 		stopAnalyzing();
@@ -83,4 +84,6 @@ $("#analyze").click(function() {
 	}
 });
 
-startAnalyzing();
+$('.indicators input[type="range"]').change(function() {
+	indicator();
+})

@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: stocksvision
+  name: stocksvision-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
@@ -27,7 +27,7 @@ spec:
           serviceName: stocksvision
           servicePort: 5000
   tls:
-  - hosts:
+  - secretName: stocksvision-cert
+    hosts:
     - stocks.vision
-    - '*.stocks.vision'
-    secretName: stocksvision
+    - api.stocks.vision

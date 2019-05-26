@@ -1,16 +1,16 @@
 apiVersion: certmanager.k8s.io/v1alpha1
 kind: Certificate
 metadata:
-  name: stocksvision
+  name: stocksvision-cert
 spec:
-  secretName: stocksvision
+  secretName: stocksvision-cert
   issuerRef:
     name: letsencrypt
     kind: ClusterIssuer
   commonName: stocks.vision
   dnsNames:
   - stocks.vision
-  - '*.stocks.vision'
+  - api.stocks.vision
   acme:
     config:
     - dns01:
@@ -18,4 +18,4 @@ spec:
         ingressClass: nginx
       domains:
       - stocks.vision
-      - '*.stocks.vision'
+      - api.stocks.vision

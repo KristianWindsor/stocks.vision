@@ -1,10 +1,13 @@
 html, body {
 	margin: 0;
 	height: 100%;
+	font-size: 18px;
 }
-
 * {
   box-sizing: border-box;
+}
+input, button {
+	font-size: 18px;
 }
 
 .fourth {
@@ -18,16 +21,16 @@ html, body {
 .fourth.indicators, .fourth.simulations {
 	min-height: 61.8vh;
 }
+@media (max-width: 700px) {
+	.fourth {
+		width: 100%;
+		height: auto;
+		min-height: 50%;
+	}
+}
 
 .fourth.input>div {
 	margin: 20px 0;
-}
-.fourth.input input, .fourth.input button {
-	font-size: 42px;
-}
-
-.fourth input {
-	width: 100%;
 }
 
 .fourth.indicators .layer {
