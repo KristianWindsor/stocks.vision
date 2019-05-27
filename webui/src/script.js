@@ -1,41 +1,56 @@
-var currentStockPrice = 178.97,
-	currentStockTicker = 'AAPL';
-var values = {
-	isEnabled: {
-		'reddit-sentiment': true,
-		'open-close-ratio': true,
-		'volume-increase': true,
-		'yesterday': true
+var settings = {
+	stock: {
+		ticker: 'AAPL',
+		price: 178.97
 	},
-	indicators: {
-		'reddit-sentiment': 0.634,
-		'open-close-ratio': 0.33,
-		'volume-increase': 0.42,
-		'yesterday': 0.9
+	holdDuration: '1 week',
+	simulationDuration: '6 months',
+	spendableCash: '$1000',
+	isAnalyzing: false
+}
+var indicators = {
+	'reddit-sentiment': {
+		isEnabled: true,
+		value: 0.634,
+		weight: 5
 	},
-	trackbars: {
-		'reddit-sentiment': 5,
-		'open-close-ratio': 5,
-		'volume-increase': 5,
-		'yesterday': 5
+	'open-close-ratio': {
+		isEnabled: true,
+		value: 0.33,
+		weight: 5
+	},
+	'volume-increase': {
+		isEnabled: true,
+		value: 0.42,
+		weight: 5
+	},
+	'yesterday': {
+		isEnabled: true,
+		value: 0.9,
+		weight: 5
 	}
 };
+
 // set values
-for (var indicatorName in values.indicators) {
-	if (values.indicators.hasOwnProperty(indicatorName)) {
-		if (values.isEnabled[indicatorName]) {
-			$('.' + indicatorName + ' input[type="checkbox"]').prop('checked', true);
-		} else {
-			$('.' + indicatorName + ' input[type="checkbox"]').prop('checked', false);
+function initializeHTML() {
+	$('#stock').val(settings.stock.ticker);
+	$('#holdDuration').val(settings.holdDuration);
+	$('#simulationDuration').val(settings.simulationDuration);
+	$('#spendableCash').val(settings.spendableCash);
+	for (var indicatorName in indicators) {
+		if (indicators.hasOwnProperty(indicatorName)) {
+			if (indicators[indicatorName].isEnabled) {
+				$('.' + indicatorName + ' input[type="checkbox"]').prop('checked', true);
+			} else {
+				$('.' + indicatorName + ' input[type="checkbox"]').prop('checked', false);
+			}
+			$('.' + indicatorName + ' .indicatorValue').html(indicators[indicatorName].value);
+			indicatorWeightChanged(indicatorName);
 		}
-		$('.' + indicatorName + ' .indicatorValue').html(values.indicators[indicatorName]);
-		indicatorChanged(indicatorName);
 	}
+	doMath();
 }
 
-
-
-var isAnalyzing = false;
 function startAnalyzing() {
 	$('.fourth.indicators input[type="range"]').prop('disabled', true);
 	simulation();
@@ -52,14 +67,14 @@ function doMath() {
 	// average indicator values
 	var numerator = 0,
 		denominator = 0;
-	for (var indicatorName in values.indicators) {
-		if (values.indicators.hasOwnProperty(indicatorName)) {
-			var value = values.indicators[indicatorName],
-				weight = values.trackbars[indicatorName],
-				isEnabled = values.isEnabled[indicatorName];
+	for (var indicatorName in indicators) {
+		if (indicators.hasOwnProperty(indicatorName)) {
+			var value = indicators[indicatorName].value,
+				weight = indicators[indicatorName].weight,
+				isEnabled = indicators[indicatorName].isEnabled;
 			if (isEnabled && weight > 0) {
-				numerator += values.indicators[indicatorName] * values.trackbars[indicatorName];
-				denominator += values.trackbars[indicatorName];
+				numerator += value * weight;
+				denominator += weight;
 			}
 		}
 	}
@@ -71,14 +86,14 @@ function doMath() {
 		cashToSpend = Math.round(cashToSpend * 100) / 100
 		$('#cashToSpend').html('$' + cashToSpend);
 		// divide to get stocks
-		var numberOfStocksToBuy = Math.floor(cashToSpend / currentStockPrice);
+		var numberOfStocksToBuy = Math.floor(cashToSpend / settings.stock.price);
 		var numberOfStocksToBuyText;
 		if (numberOfStocksToBuy == 0) {
-			numberOfStocksToBuyText = "Don't buy "+currentStockTicker+".";
+			numberOfStocksToBuyText = "Don't buy "+settings.stock.ticker+".";
 		} else if (numberOfStocksToBuy == 1) {
-			numberOfStocksToBuyText = 'Buy ' + numberOfStocksToBuy.toString() + ' share of ' + currentStockTicker;
+			numberOfStocksToBuyText = 'Buy ' + numberOfStocksToBuy.toString() + ' share of ' + settings.stock.ticker;
 		} else {
-			numberOfStocksToBuyText = 'Buy ' + numberOfStocksToBuy.toString() + ' shares of ' + currentStockTicker;
+			numberOfStocksToBuyText = 'Buy ' + numberOfStocksToBuy.toString() + ' shares of ' + settings.stock.ticker;
 		}
 		$('#theMove').html(numberOfStocksToBuyText);
 	} else {
@@ -87,24 +102,23 @@ function doMath() {
 		$('#theMove').html('');
 	}
 }
-doMath();
 
-function indicatorChanged(indicator) {
+function indicatorWeightChanged(indicatorName) {
 	// get values
-	var indicatorValue = parseFloat($('.' + indicator + ' .indicatorValue').html());
-	var trackbarValue = parseFloat($('#' + indicator).val());
+	var indicatorValue = parseFloat($('.' + indicatorName + ' .indicatorValue').html());
+	var trackbarValue = parseFloat($('#' + indicatorName).val());
 	// update values
-	values.trackbars[indicator] = trackbarValue;
-	$('.' + indicator + ' .trackbarValue').html(trackbarValue);
+	indicators[indicatorName].weight = trackbarValue;
+	$('.' + indicatorName + ' .trackbarValue').html(trackbarValue);
 	doMath();
 }
-function indicatorCheckbox(indicator) {
-	if ($('.' + indicator + ' input[type="checkbox"]').is(':checked')) {
-		values.isEnabled[indicator] = true;
-		$('.' + indicator + ' .indicatorMath').show();
+function indicatorEnabledChanged(indicatorName) {
+	if ($('.' + indicatorName + ' input[type="checkbox"]').is(':checked')) {
+		indicators[indicatorName].isEnabled = true;
+		$('.' + indicatorName + ' .indicatorMath').show();
 	} else {
-		values.isEnabled[indicator] = false;
-		$('.' + indicator + ' .indicatorMath').hide();
+		indicators[indicatorName].isEnabled = false;
+		$('.' + indicatorName + ' .indicatorMath').hide();
 	}
 	doMath();
 }
@@ -149,6 +163,11 @@ function simulation() {
 }
 
 
+
+initializeHTML();
+
+
+
 $('#stock').on('input', function() {
 	if ($(this).val().length > 0) {
 		simulation();
@@ -165,11 +184,11 @@ $('#spendableCash').on('input', function() {
 	}
 });
 $("#simulationButton").click(function() {
-	if (isAnalyzing == true) {
-		isAnalyzing = false;
+	if (settings.isAnalyzing == true) {
+		settings.isAnalyzing = false;
 		stopAnalyzing();
 	} else {
-		isAnalyzing = true;
+		settings.isAnalyzing = true;
 		startAnalyzing();
 	}
 });

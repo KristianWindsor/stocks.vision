@@ -16,19 +16,19 @@
 			</h1>
 			<div>
 				<span>Stock</span><br>
-				<input id="stock" type="text" value="AAPL" />
+				<input id="stock" type="text" value="" />
 			</div>
 			<div>
 				<span>Hold Duration</span><br>
-				<input id="holdDuration" type="text" value="1 week" />
+				<input id="holdDuration" type="text" value="" />
 			</div>
 			<div>
 				<span>Simulation Duration</span><br>
-				<input id="simulationDuration" type="text" value="6 months" />
+				<input id="simulationDuration" type="text" value="" />
 			</div>
 			<div>
 				<span>Spendable Cash</span><br>
-				<input id="spendableCash" type="text" value="$1000" />
+				<input id="spendableCash" type="text" value="" />
 			</div>
 			<button id="simulationButton">
 				Run Simulations
@@ -57,9 +57,9 @@
 				<table>
 					<tbody class="reddit-sentiment">
 						<tr>
-							<td><input type="checkbox" onchange="indicatorCheckbox('reddit-sentiment')" /></td>
+							<td><input type="checkbox" onchange="indicatorEnabledChanged('reddit-sentiment')" /></td>
 							<td>Reddit Sentiment</td>
-							<td><input id="reddit-sentiment" type="range" min="0" max="10" value="5" oninput="indicatorChanged('reddit-sentiment');" onchange="indicatorChanged('reddit-sentiment');" /></td>
+							<td><input id="reddit-sentiment" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('reddit-sentiment');" onchange="indicatorWeightChanged('reddit-sentiment');" /></td>
 						</tr>
 						<tr>
 							<td></td>
@@ -69,9 +69,9 @@
 					</tbody>
 					<tbody class="open-close-ratio">
 						<tr>
-							<td><input type="checkbox" onchange="indicatorCheckbox('open-close-ratio')"  /></td>
+							<td><input type="checkbox" onchange="indicatorEnabledChanged('open-close-ratio')"  /></td>
 							<td>Open Close Ratio</td>
-							<td><input id="open-close-ratio" type="range" min="0" max="10" value="5" oninput="indicatorChanged('open-close-ratio');" onchange="indicatorChanged('open-close-ratio');" /></td>
+							<td><input id="open-close-ratio" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('open-close-ratio');" onchange="indicatorWeightChanged('open-close-ratio');" /></td>
 						</tr>
 						<tr>
 							<td></td>
@@ -81,9 +81,9 @@
 					</tbody>
 					<tbody class="volume-increase">
 						<tr>
-							<td><input type="checkbox" onchange="indicatorCheckbox('volume-increase')"  /></td>
+							<td><input type="checkbox" onchange="indicatorEnabledChanged('volume-increase')"  /></td>
 							<td>Volume Increase</td>
-							<td><input id="volume-increase" type="range" min="0" max="10" value="5" oninput="indicatorChanged('volume-increase');" onchange="indicatorChanged('volume-increase');" /></td>
+							<td><input id="volume-increase" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('volume-increase');" onchange="indicatorWeightChanged('volume-increase');" /></td>
 						</tr>
 						<tr>
 							<td></td>
@@ -93,9 +93,9 @@
 					</tbody>
 					<tbody class="yesterday">
 						<tr>
-							<td><input type="checkbox" onchange="indicatorCheckbox('yesterday')"  /></td>
+							<td><input type="checkbox" onchange="indicatorEnabledChanged('yesterday')"  /></td>
 							<td>Yesterday</td>
-							<td><input id="yesterday" type="range" min="0" max="10" value="5" oninput="indicatorChanged('yesterday');" onchange="indicatorChanged('yesterday');" /></td>
+							<td><input id="yesterday" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('yesterday');" onchange="indicatorWeightChanged('yesterday');" /></td>
 						</tr>
 						<tr>
 							<td></td>
