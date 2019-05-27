@@ -2,12 +2,15 @@ html, body {
 	margin: 0;
 	height: 100%;
 	font-size: 18px;
+	font-family: 'Roboto', sans-serif;
+	color: #333;
 }
 * {
   box-sizing: border-box;
 }
 input, button {
 	font-size: 18px;
+	font-family: 'Roboto', sans-serif;
 }
 
 .fourth {
@@ -43,6 +46,10 @@ input, button {
 .indicator .col {
 	display: table-cell;
 	text-align: center;
+}
+
+.result {
+	font-weight: 700;
 }
 
 .layer {
