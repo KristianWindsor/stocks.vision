@@ -33,11 +33,14 @@ input, button {
 	margin: 20px 0;
 }
 
-.fourth.indicators .layer {
+.fourth.indicators input[type="range"] {
+	width: 100%;
+}
+.indicators-wrap {
 	display: table;
 	width: 100%;
 }
-.fourth.indicators .layer>* {
+.indicator .col {
 	display: table-cell;
 	text-align: center;
 }
@@ -45,14 +48,14 @@ input, button {
 .layer {
 	margin: 20px 0;
 }
-
-.layer input {
-}
-
 .layer p {
 	display: inline-block;
 }
 
-.layer {
-	
+table {
+	width: 100%;
+	border-collapse: collapse;
+}
+td {
+	text-align: center;
 }
