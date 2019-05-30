@@ -16,13 +16,16 @@ input, button {
 .fourth {
 	display: inline-block;
 	width: 50%;
-	height: 50%;
 	padding: 3% 6%;
 	vertical-align: top;
 	border: 1px solid #ccc;
 }
+.fourth.input, .fourth.output {
+	min-height: 38.2vh;
+}
 .fourth.indicators, .fourth.simulations {
 	min-height: 61.8vh;
+	height: 50%;
 }
 @media (max-width: 700px) {
 	.fourth {
@@ -47,6 +50,11 @@ input, button {
 	display: table-cell;
 	text-align: center;
 }
+.indicators div {
+	display: inline-block;
+	width: 33%;
+	padding: 15px;
+}
 
 .result {
 	font-weight: 700;
@@ -62,7 +70,25 @@ input, button {
 table {
 	width: 100%;
 	border-collapse: collapse;
+	border-spacing: 0;
 }
 td {
 	text-align: center;
 }
+
+.simulations .timepicker td {
+	padding: 0;
+}
+.simulations .timepicker a {
+	display: inline-block;
+	width: 100%;
+	text-decoration: none;
+	border: 1px solid #ccc;
+}
+.simulations .timepicker a:hover {
+	background-color: #333;
+	color: #fff;
+}
+
+
+

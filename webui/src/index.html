@@ -19,31 +19,43 @@
 				<span>Stock</span><br>
 				<input id="stock" type="text" value="" onchange="checkForIndicatorUpdate()" />
 			</div>
-			<div>
-				<span>Hold Duration</span><br>
-				<input id="holdDuration" type="text" value="" onchange="checkForIndicatorUpdate()" />
-			</div>
-			<div>
-				<span>Simulation Duration</span><br>
-				<input id="simulationDuration" type="text" value="" onchange="checkForIndicatorUpdate()" />
-			</div>
-			<div>
-				<span>Spendable Cash</span><br>
-				<input id="spendableCash" type="text" value="" onchange="checkForIndicatorUpdate()" />
-			</div>
+				<div>
+					<p>
+						Selling strategy
+					</p>
+				</div>
+					<div>
+						<input type="radio" id="sell-indicators" name="sell-strategy"> 
+						<label for="sell-indicators">
+							<span>
+								Sell based on indicators
+							</span>
+						</label>
+					</div>
+					<div>
+						<input type="radio" id="sell-time" name="sell-strategy">
+						<label for="sell-time">
+							<span>
+								Sell after a time period of 
+							</span>
+							<input id="holdDuration" type="text" value="" onchange="checkForIndicatorUpdate()" />
+						</label>
+					</div>
 			<button id="simulationButton">
-				Run Simulations
+				Run Stock Analysis
 			</button>
 		</div><!--
 	 --><div class="fourth output">
 			<div>
 				<h2>Results</h2>
 				<p>
-					Averaged Indicator Value<br>
+					Indicator Value (Averaged)<br>
 					<span id="averageIndicatorValue" class="result"></span>
 				</p>
 				<p>
 					Cash to Spend<br>
+					<input id="spendableCash" type="text" value="" onchange="checkForIndicatorUpdate()" />
+					<br>
 					<span id="cashToSpend" class="result"></span>
 				</p>
 				<p>
@@ -53,64 +65,93 @@
 			</div>
 		</div><!--
 	 --><div class="fourth indicators">
-			<div>
-				<h2>Indicators</h2>
-				<table>
-					<tbody class="reddit-wallstreetbets">
-						<tr>
-							<td><input type="checkbox" onchange="indicatorEnabledChanged('reddit-wallstreetbets')" /></td>
-							<td>Reddit Sentiment</td>
-							<td><input id="reddit-wallstreetbets" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('reddit-wallstreetbets');" onchange="indicatorWeightChanged('reddit-wallstreetbets');" /></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-							<td class="indicatorMath"><span class="indicatorValue"></span> * <span class="trackbarValue"></span></td>
-						</tr>
-					</tbody>
-					<tbody class="reddit-stocks">
-						<tr>
-							<td><input type="checkbox" onchange="indicatorEnabledChanged('reddit-stocks')"  /></td>
-							<td>Open Close Ratio</td>
-							<td><input id="reddit-stocks" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('reddit-stocks');" onchange="indicatorWeightChanged('reddit-stocks');" /></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-							<td class="indicatorMath"><span class="indicatorValue"></span> * <span class="trackbarValue"></span></td>
-						</tr>
-					</tbody>
-					<tbody class="volume-increase">
-						<tr>
-							<td><input type="checkbox" onchange="indicatorEnabledChanged('volume-increase')"  /></td>
-							<td>Volume Increase</td>
-							<td><input id="volume-increase" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('volume-increase');" onchange="indicatorWeightChanged('volume-increase');" /></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-							<td class="indicatorMath"><span class="indicatorValue"></span> * <span class="trackbarValue"></span></td>
-						</tr>
-					</tbody>
-					<tbody class="example">
-						<tr>
-							<td><input type="checkbox" onchange="indicatorEnabledChanged('example')"  /></td>
-							<td>Example</td>
-							<td><input id="example" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('example');" onchange="indicatorWeightChanged('example');" /></td>
-						</tr>
-						<tr>
-							<td></td>
-							<td></td>
-							<td class="indicatorMath"><span class="indicatorValue"></span> * <span class="trackbarValue"></span></td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div><!--
+			<h2>Indicators</h2><!--
+		 --><div class="reddit-wallstreetbets">
+				<input type="checkbox" onchange="indicatorEnabledChanged('reddit-wallstreetbets')" /><br>
+				Reddit Wallstreet Bets
+				<input id="reddit-wallstreetbets" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('reddit-wallstreetbets');" onchange="indicatorWeightChanged('reddit-wallstreetbets');" />
+				<span class="indicatorValue"></span> * <span class="trackbarValue"></span>
+			</div><!--
+		 --><div class="reddit-stocks">
+				<input type="checkbox" onchange="indicatorEnabledChanged('reddit-stocks')"  /><br>
+				Reddit Stocks
+				<input id="reddit-stocks" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('reddit-stocks');" onchange="indicatorWeightChanged('reddit-stocks');" />
+				<span class="indicatorValue"></span> * <span class="trackbarValue"></span>
+			</div><!--
+		 --><div class="volume-increase">
+				<input type="checkbox" onchange="indicatorEnabledChanged('volume-increase')"  /><br>
+				Volume Increase
+				<input id="volume-increase" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('volume-increase');" onchange="indicatorWeightChanged('volume-increase');" />
+				<span class="indicatorValue"></span> * <span class="trackbarValue"></span>
+			</div><!--
+		 --><div class="example">
+				<input type="checkbox" onchange="indicatorEnabledChanged('example')"  /><br>
+				Example
+				<input id="example" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('example');" onchange="indicatorWeightChanged('example');" />
+				<span class="indicatorValue"></span> * <span class="trackbarValue"></span>
+			</div><!--
+	 --></div><!--
 	 --><div class="fourth simulations">
 			<div>
 				<h2>Simulation</h2>
-				<img src="https://i.pinimg.com/236x/e0/50/7f/e0507f9c78708dcce6948ecabb80cbc4--free-stock-trading-android-apps.jpg" id="placeholder-img" style="display: none;" />
+				<p>
+					Length of simulation in weeks:
+				</p>
+				<table>
+					<tbody>
+						<tr class="timepicker">
+							<td>
+								<a href="#">
+									1
+								</a>
+							</td>
+							<td>
+								<a href="#">
+									2
+								</a>
+							</td>
+							<td>
+								<a href="#">
+									3
+								</a>
+							</td>
+							<td>
+								<a href="#">
+									5
+								</a>
+							</td>
+							<td>
+								<a href="#">
+									8
+								</a>
+							</td>
+							<td>
+								<a href="#">
+									13
+								</a>
+							</td>
+							<td>
+								<a href="#">
+									21
+								</a>
+							</td>
+							<td>
+								<a href="#">
+									34
+								</a>
+							</td>
+							<td>
+								<a href="#">
+									55
+								</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<div>
+				</div>
+					<img src="https://i.pinimg.com/236x/e0/50/7f/e0507f9c78708dcce6948ecabb80cbc4--free-stock-trading-android-apps.jpg" id="placeholder-img" style="display: none;" />
+				</div>
 			</div>
 		</div>
 	</body>

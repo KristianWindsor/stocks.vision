@@ -3,11 +3,14 @@ var settings = {
 		ticker: 'AAPL',
 		price: 178.97
 	},
-	holdDuration: '1 week',
-	simulationDuration: '6 months',
+	simulation: {
+		length: '6 months',
+		sellStrategy: 0,
+		sellTimePeriod: '1 week'
+	},
 	spendableCash: '$1000',
 	isAnalyzing: false
-}
+};
 var indicators = {
 	'reddit-wallstreetbets': {
 		isEnabled: true,
@@ -34,8 +37,13 @@ var indicators = {
 // set values
 function initializeHTML() {
 	$('#stock').val(settings.stock.ticker);
-	$('#holdDuration').val(settings.holdDuration);
-	$('#simulationDuration').val(settings.simulationDuration);
+	$('#holdDuration').val(settings.simulation.sellTimePeriod);
+	if (settings.simulation.sellStrategy == 0) {
+		$('#sell-indicators').prop("checked", true);
+	} else {
+		$('#sell-time').prop("checked", true);
+	}
+	$('#simulationDuration').val(settings.simulation.length);
 	$('#spendableCash').val(settings.spendableCash);
 	for (var indicatorName in indicators) {
 		if (indicators.hasOwnProperty(indicatorName)) {
@@ -115,10 +123,8 @@ function indicatorEnabledChanged(indicatorName) {
 	if ($('.' + indicatorName + ' input[type="checkbox"]').is(':checked')) {
 		checkForIndicatorUpdate();
 		indicators[indicatorName].isEnabled = true;
-		$('.' + indicatorName + ' .indicatorMath').show();
 	} else {
 		indicators[indicatorName].isEnabled = false;
-		$('.' + indicatorName + ' .indicatorMath').hide();
 	}
 	doMath();
 }
