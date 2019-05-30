@@ -50,6 +50,20 @@ spec:
           volumeMounts:
            - name: stocksvision-mysql
              mountPath: /var/lib/mysql
+# phpmyadmin              
+        - name: phpmyadmin
+          image: kristianwindsor/stocksvision-phpmyadmin
+          ports:
+            - containerPort: 8080
+              name: phpmyadmin
+          env:
+            - name: PMA_HOST
+              value: stocksvision
+            - name: MYSQL_ROOT_PASSWORD
+              value: pass
+          resources:
+            requests:
+              cpu: 5m
 #
       imagePullSecrets:
         - name: dockerhub
