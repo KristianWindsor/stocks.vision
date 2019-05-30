@@ -9,24 +9,24 @@ var settings = {
 	isAnalyzing: false
 }
 var indicators = {
-	'reddit-sentiment': {
+	'reddit-wallstreetbets': {
 		isEnabled: true,
-		value: 0.634,
+		value: undefined,
 		weight: 5
 	},
-	'open-close-ratio': {
+	'reddit-stocks': {
 		isEnabled: true,
-		value: 0.33,
+		value: undefined,
 		weight: 5
 	},
 	'volume-increase': {
 		isEnabled: true,
-		value: 0.42,
+		value: undefined,
 		weight: 5
 	},
-	'yesterday': {
+	'example': {
 		isEnabled: true,
-		value: 0.9,
+		value: undefined,
 		weight: 5
 	}
 };
@@ -44,11 +44,10 @@ function initializeHTML() {
 			} else {
 				$('.' + indicatorName + ' input[type="checkbox"]').prop('checked', false);
 			}
-			$('.' + indicatorName + ' .indicatorValue').html(indicators[indicatorName].value);
 			indicatorWeightChanged(indicatorName);
 		}
 	}
-	doMath();
+	checkForIndicatorUpdate();
 }
 
 function startAnalyzing() {
@@ -114,6 +113,7 @@ function indicatorWeightChanged(indicatorName) {
 }
 function indicatorEnabledChanged(indicatorName) {
 	if ($('.' + indicatorName + ' input[type="checkbox"]').is(':checked')) {
+		checkForIndicatorUpdate();
 		indicators[indicatorName].isEnabled = true;
 		$('.' + indicatorName + ' .indicatorMath').show();
 	} else {
@@ -123,10 +123,19 @@ function indicatorEnabledChanged(indicatorName) {
 	doMath();
 }
 
-function indicator() {
-	var indicator = 'reddit-sentiment',
-		stock = $('#stock').val();
-
+function checkForIndicatorUpdate() {
+	// stock
+	// hold duration
+	// simulation duration
+	// spendable cash
+	// stock price update
+	// enable indicator
+	for (var indicatorName in indicators) {
+		GETindicator(indicatorName);
+	}
+}
+function GETindicator(indicator) {
+	var stock = $('#stock').val();
 	$.ajax({
 		type: 'POST',
 		url: 'https://api.stocks.vision/indicator',
@@ -135,7 +144,11 @@ function indicator() {
 			'stock': stock
 		},
 		success: function(value){
+			// update value
+			indicators[indicator].value = value;
 			$('.' + indicator + ' .indicatorValue').html(value);
+			// update math
+			doMath();
 		}
 	});
 }
@@ -192,8 +205,3 @@ $("#simulationButton").click(function() {
 		startAnalyzing();
 	}
 });
-
-
-$('.indicators input[type="range"]').change(function() {
-	indicator();
-})

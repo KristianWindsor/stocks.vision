@@ -17,19 +17,19 @@
 			</h1>
 			<div>
 				<span>Stock</span><br>
-				<input id="stock" type="text" value="" />
+				<input id="stock" type="text" value="" onchange="checkForIndicatorUpdate()" />
 			</div>
 			<div>
 				<span>Hold Duration</span><br>
-				<input id="holdDuration" type="text" value="" />
+				<input id="holdDuration" type="text" value="" onchange="checkForIndicatorUpdate()" />
 			</div>
 			<div>
 				<span>Simulation Duration</span><br>
-				<input id="simulationDuration" type="text" value="" />
+				<input id="simulationDuration" type="text" value="" onchange="checkForIndicatorUpdate()" />
 			</div>
 			<div>
 				<span>Spendable Cash</span><br>
-				<input id="spendableCash" type="text" value="" />
+				<input id="spendableCash" type="text" value="" onchange="checkForIndicatorUpdate()" />
 			</div>
 			<button id="simulationButton">
 				Run Simulations
@@ -56,11 +56,11 @@
 			<div>
 				<h2>Indicators</h2>
 				<table>
-					<tbody class="reddit-sentiment">
+					<tbody class="reddit-wallstreetbets">
 						<tr>
-							<td><input type="checkbox" onchange="indicatorEnabledChanged('reddit-sentiment')" /></td>
+							<td><input type="checkbox" onchange="indicatorEnabledChanged('reddit-wallstreetbets')" /></td>
 							<td>Reddit Sentiment</td>
-							<td><input id="reddit-sentiment" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('reddit-sentiment');" onchange="indicatorWeightChanged('reddit-sentiment');" /></td>
+							<td><input id="reddit-wallstreetbets" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('reddit-wallstreetbets');" onchange="indicatorWeightChanged('reddit-wallstreetbets');" /></td>
 						</tr>
 						<tr>
 							<td></td>
@@ -68,11 +68,11 @@
 							<td class="indicatorMath"><span class="indicatorValue"></span> * <span class="trackbarValue"></span></td>
 						</tr>
 					</tbody>
-					<tbody class="open-close-ratio">
+					<tbody class="reddit-stocks">
 						<tr>
-							<td><input type="checkbox" onchange="indicatorEnabledChanged('open-close-ratio')"  /></td>
+							<td><input type="checkbox" onchange="indicatorEnabledChanged('reddit-stocks')"  /></td>
 							<td>Open Close Ratio</td>
-							<td><input id="open-close-ratio" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('open-close-ratio');" onchange="indicatorWeightChanged('open-close-ratio');" /></td>
+							<td><input id="reddit-stocks" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('reddit-stocks');" onchange="indicatorWeightChanged('reddit-stocks');" /></td>
 						</tr>
 						<tr>
 							<td></td>
@@ -92,11 +92,11 @@
 							<td class="indicatorMath"><span class="indicatorValue"></span> * <span class="trackbarValue"></span></td>
 						</tr>
 					</tbody>
-					<tbody class="yesterday">
+					<tbody class="example">
 						<tr>
-							<td><input type="checkbox" onchange="indicatorEnabledChanged('yesterday')"  /></td>
-							<td>Yesterday</td>
-							<td><input id="yesterday" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('yesterday');" onchange="indicatorWeightChanged('yesterday');" /></td>
+							<td><input type="checkbox" onchange="indicatorEnabledChanged('example')"  /></td>
+							<td>Example</td>
+							<td><input id="example" type="range" min="0" max="10" value="5" oninput="indicatorWeightChanged('example');" onchange="indicatorWeightChanged('example');" /></td>
 						</tr>
 						<tr>
 							<td></td>
