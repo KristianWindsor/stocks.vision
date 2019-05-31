@@ -115,8 +115,10 @@ function indicatorWeightChanged(indicatorName) {
 	var indicatorValue = parseFloat($('.' + indicatorName + ' .indicatorValue').html());
 	var trackbarValue = parseFloat($('#' + indicatorName).val());
 	// update values
-	indicators[indicatorName].weight = trackbarValue;
-	$('.' + indicatorName + ' .trackbarValue').html(trackbarValue);
+	if (trackbarValue >= 0 && trackbarValue <= 10) {
+		indicators[indicatorName].weight = trackbarValue;
+		$('.' + indicatorName + ' .trackbarValue').html(trackbarValue);
+	}
 	doMath();
 }
 function indicatorEnabledChanged(indicatorName) {
@@ -150,6 +152,22 @@ function GETindicator(indicator) {
 			'stock': stock
 		},
 		success: function(value){
+			// populate html
+			if (indicators[indicator].value == undefined) {
+				var checkboxMaybeChecked = '';
+				if (indicators[indicator].isEnabled == true) {
+					checkboxMaybeChecked = 'checked="checked"';
+				}
+		 		var html = `
+		 			<div class="`+indicator+`">
+						<input type="checkbox" onchange="indicatorEnabledChanged('`+indicator+`')" `+checkboxMaybeChecked+` /><br>
+						`+indicator+`
+						<input id="`+indicator+`" type="range" min="0" max="10" value="`+indicators[indicator].weight+`" oninput="indicatorWeightChanged('`+indicator+`');" onchange="indicatorWeightChanged('`+indicator+`');" />
+						<span class="indicatorValue"></span> * <span class="trackbarValue">`+indicators[indicator].weight+`</span>
+					</div>
+		 		`;
+		 		$('.fourth.indicators').append(html);
+			}
 			// update value
 			indicators[indicator].value = value;
 			$('.' + indicator + ' .indicatorValue').html(value);
