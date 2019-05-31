@@ -3,6 +3,7 @@ from flask import Flask
 from flask import jsonify
 from flask import request
 from flask_cors import CORS, cross_origin
+import os
 
 # write each module name in __init__.py so they can import successfully
 from os.path import dirname, basename, isfile, join
@@ -37,8 +38,24 @@ def indicator():
 	stock = request.form.get('stock')
 	# run indicator py script with given stock
 	# return results
-	results = getattr(indicators, indicator).main(stock)
-	return str(results)
+	if isinstance(indicator, (list,)):
+		print('this is a list')
+		results = 'list'
+	elif indicator == '*':
+		print('star. return all indicator values')
+		indicatorNameList = []
+		results = {}
+		for root, dirs, files in os.walk(r'indicators/'):
+			for file in files:
+				if file.endswith('.py') and '__init__' not in file:
+					indicatorNameList.append(file.replace('.py', ''))
+		for indicatorName in indicatorNameList:
+			results[indicatorName] = getattr(indicators, indicatorName).main(stock)
+		print(results)
+	else:
+		print('this is a single indicator')
+		results = getattr(indicators, indicator).main(stock)
+	return jsonify(results)
 
 
 #

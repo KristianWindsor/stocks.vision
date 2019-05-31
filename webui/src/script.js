@@ -55,7 +55,7 @@ function initializeHTML() {
 			indicatorWeightChanged(indicatorName);
 		}
 	}
-	checkForIndicatorUpdate();
+	GETindicator('*');
 }
 
 function startAnalyzing() {
@@ -123,7 +123,7 @@ function indicatorWeightChanged(indicatorName) {
 }
 function indicatorEnabledChanged(indicatorName) {
 	if ($('.' + indicatorName + ' input[type="checkbox"]').is(':checked')) {
-		checkForIndicatorUpdate();
+		GETindicator(indicatorName)
 		indicators[indicatorName].isEnabled = true;
 	} else {
 		indicators[indicatorName].isEnabled = false;
@@ -138,8 +138,10 @@ function checkForIndicatorUpdate() {
 	// spendable cash
 	// stock price update
 	// enable indicator
-	for (var indicatorName in indicators) {
-		GETindicator(indicatorName);
+	if (true == false) {
+		for (var indicatorName in indicators) {
+			GETindicator(indicatorName);
+		}
 	}
 }
 function GETindicator(indicator) {
@@ -151,26 +153,35 @@ function GETindicator(indicator) {
 			'indicator': indicator, 
 			'stock': stock
 		},
-		success: function(value){
-			// populate html
-			if (indicators[indicator].value == undefined) {
-				var checkboxMaybeChecked = '';
-				if (indicators[indicator].isEnabled == true) {
-					checkboxMaybeChecked = 'checked="checked"';
+		success: function(returnData){
+			Object.keys(returnData).forEach(function(indicatorName) {
+				// update value
+				if (!indicators.hasOwnProperty(indicatorName)) {
+					indicators[indicatorName] = {
+						isEnabled: true,
+						value: returnData[indicatorName],
+						weight: 5
+					};
+				} else {
+					indicators[indicatorName].value = returnData[indicatorName];
 				}
-		 		var html = `
-		 			<div class="`+indicator+`">
-						<input type="checkbox" onchange="indicatorEnabledChanged('`+indicator+`')" `+checkboxMaybeChecked+` /><br>
-						`+indicator+`
-						<input id="`+indicator+`" type="range" min="0" max="10" value="`+indicators[indicator].weight+`" oninput="indicatorWeightChanged('`+indicator+`');" onchange="indicatorWeightChanged('`+indicator+`');" />
-						<span class="indicatorValue"></span> * <span class="trackbarValue">`+indicators[indicator].weight+`</span>
-					</div>
-		 		`;
-		 		$('.fourth.indicators').append(html);
-			}
-			// update value
-			indicators[indicator].value = value;
-			$('.' + indicator + ' .indicatorValue').html(value);
+				// populate html
+				if (!$('.'+indicatorName).length) {
+					var checkboxMaybeChecked = '';
+					if (indicators[indicatorName].isEnabled == true) {
+						checkboxMaybeChecked = 'checked="checked"';
+					}
+			 		var html = `
+			 			<div class="`+indicatorName+`">
+							<input type="checkbox" onchange="indicatorEnabledChanged('`+indicatorName+`')" `+checkboxMaybeChecked+` /><br>
+							`+indicatorName+`
+							<input id="`+indicatorName+`" type="range" min="0" max="10" value="`+indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" onchange="indicatorWeightChanged('`+indicatorName+`');" />
+							<span class="indicatorValue">`+returnData[indicatorName]+`</span> * <span class="trackbarValue">`+indicators[indicatorName].weight+`</span>
+						</div>
+			 		`;
+			 		$('.fourth.indicators').append(html);
+				}
+			});
 			// update math
 			doMath();
 		}
