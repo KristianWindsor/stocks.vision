@@ -1,0 +1,35 @@
+version: "3"
+services:
+  db:
+    image: kristianwindsor/stocksvision-mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./mysql/mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: stocksvision
+      MYSQL_ROOT_PASSWORD: pass
+  webui:
+    image: kristianwindsor/stocksvision-webui
+    ports:
+      - 8080:80
+    restart: always
+    volumes:
+      - ./webui/src:/usr/local/apache2/htdocs/
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - 8081:80
+    restart: always
+  backend:
+    image: kristianwindsor/stocksvision-backend
+    ports:
+      - 8082:5000
+    restart: always
+    volumes:
+      - ./backend/src/:/app/
+  crawler:
+    image: kristianwindsor/stocksvision-crawler
+    restart: always
+    volumes:
+      - ./crawler/src/:/app/

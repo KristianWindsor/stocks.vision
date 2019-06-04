@@ -1,0 +1,33 @@
+from django.db import models
+
+class dispensaries(models.Model):
+	wmid1 = models.CharField(max_length=200, default='')
+	wmid2 = models.CharField(max_length=200, default='')
+	name = models.CharField(max_length=200, default='')
+	slug = models.CharField(max_length=200, default='')
+	address = models.CharField(max_length=200, default='')
+	state = models.CharField(max_length=20, default='')
+	city = models.CharField(max_length=200, default='')
+	zip_code = models.CharField(max_length=20, default='')
+	latitude = models.CharField(max_length=200, default='')
+	longitude = models.CharField(max_length=200, default='')
+	time_zone = models.CharField(max_length=200, default='')
+	img_url = models.CharField(max_length=200, default='')
+	hours = models.CharField(max_length=200, default='')
+	license_type = models.CharField(max_length=200, default='')
+	website_url = models.CharField(max_length=200, default='')
+	flagged = models.BooleanField(default=False)
+
+class flower(models.Model):
+	wmid = models.CharField(max_length=200, default='')
+	name = models.CharField(max_length=200, default='')
+	slug = models.CharField(max_length=200, default='')
+	brand = models.CharField(max_length=200, default='')
+	description = models.CharField(max_length=200, default='')
+	price_g = models.CharField(max_length=200, default='')
+	price_eighth = models.CharField(max_length=200, default='')
+	price_fourth = models.CharField(max_length=200, default='')
+	price_half = models.CharField(max_length=200, default='')
+	price_oz = models.CharField(max_length=200, default='')
+	img_url = models.CharField(max_length=200, default='')
+	flagged = models.BooleanField(default=False)

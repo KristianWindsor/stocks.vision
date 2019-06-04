@@ -56,11 +56,11 @@ spec:
           ports:
             - containerPort: 8080
               name: phpmyadmin
-          env:
-            - name: PMA_HOST
-              value: stocksvision
-            - name: MYSQL_ROOT_PASSWORD
-              value: pass
+          # env:
+          #   - name: PMA_HOST
+          #     value: stocksvision
+          #   - name: MYSQL_ROOT_PASSWORD
+          #     value: pass
           resources:
             requests:
               cpu: 5m
