@@ -1,5 +1,8 @@
 FROM python:3.6
 
 COPY src /app/
+WORKDIR /app/
 
-CMD python /app/runCrawler.py
+RUN pip3 install -r requirements.txt
+
+CMD python3 runCrawler.py

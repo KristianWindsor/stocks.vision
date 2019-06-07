@@ -14,9 +14,6 @@ class dispensaries(models.Model):
 	time_zone = models.CharField(max_length=200, default='')
 	img_url = models.CharField(max_length=200, default='')
 	hours = models.CharField(max_length=200, default='')
-	license_type = models.CharField(max_length=200, default='')
-	website_url = models.CharField(max_length=200, default='')
-	flagged = models.BooleanField(default=False)
 
 class flower(models.Model):
 	wmid = models.CharField(max_length=200, default='')

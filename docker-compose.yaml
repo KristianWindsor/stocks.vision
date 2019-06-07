@@ -7,8 +7,7 @@ services:
     volumes:
       - ./mysql/mysql-data:/var/lib/mysql
     environment:
-      MYSQL_DATABASE: stocksvision
-      MYSQL_ROOT_PASSWORD: pass
+      - MYSQL_ROOT_PASSWORD=pass
   webui:
     image: kristianwindsor/stocksvision-webui
     ports:
@@ -21,6 +20,8 @@ services:
     ports:
       - 8081:80
     restart: always
+    links:
+      - db:db
   backend:
     image: kristianwindsor/stocksvision-backend
     ports:
@@ -33,3 +34,5 @@ services:
     restart: always
     volumes:
       - ./crawler/src/:/app/
+    links:
+      - db:db
