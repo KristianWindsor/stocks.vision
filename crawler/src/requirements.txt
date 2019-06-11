@@ -1,3 +1,6 @@
 sqlalchemy
 pymysql
 cryptography
+flask
+flask_sqlalchemy
+flask_migrate

@@ -20,8 +20,6 @@ services:
     ports:
       - 8081:80
     restart: always
-    links:
-      - db:db
   backend:
     image: kristianwindsor/stocksvision-backend
     ports:
@@ -32,7 +30,7 @@ services:
   crawler:
     image: kristianwindsor/stocksvision-crawler
     restart: always
+    environment:
+      - SQLALCHEMY_TRACK_MODIFICATIONS=True
     volumes:
       - ./crawler/src/:/app/
-    links:
-      - db:db
