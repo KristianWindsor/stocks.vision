@@ -21,6 +21,9 @@ services:
     image: phpmyadmin/phpmyadmin
     ports:
       - 8081:80
+    environment:
+      - PMA_USER=phpmyadmin
+      - PMA_PASSWORD=pass
     restart: always
   backend:
     image: kristianwindsor/stocksvision-backend
@@ -31,6 +34,8 @@ services:
       - ./backend/src/:/app/
   crawler:
     image: kristianwindsor/stocksvision-crawler
+    environment:
+      - MYSQL_HOSTNAME=db
     ports:
       - 8083:8083
     restart: always

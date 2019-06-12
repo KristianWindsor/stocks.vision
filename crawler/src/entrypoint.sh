@@ -1,12 +1,12 @@
 #!/bin/bash
 set -x
 
-# wait for mysql\
+# wait for mysql
 until [ -n "$mysqlIsRunning" ]
 do
-	if [[ $(telnet db 3306) == *"Connected to db."* ]]
+	if [[ $(telnet $MYSQL_HOSTNAME 3306) == *"Connected to $MYSQL_HOSTNAME."* ]]
 	then
-		mysqlIsRunning="true"
+		mysqlIsRunning="mysqlIsRunning"
 	fi
 	sleep 5
 done

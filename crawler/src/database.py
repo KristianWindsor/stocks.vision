@@ -7,16 +7,18 @@ except:
 from flask_migrate import Migrate
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
-#from sqlalchemy import create_engine
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import scoped_session, sessionmaker
+import os
  
 
 Base = declarative_base()
 
+mysqlCreds = 'mysql://phpmyadmin:pass@' + os.environ['MYSQL_HOSTNAME'] + ':3306/stocksvision'
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://phpmyadmin:pass@db:3306/stocksvision'
+app.config['SQLALCHEMY_DATABASE_URI'] = mysqlCreds
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 
@@ -36,7 +38,7 @@ class Person(Base):
  
 
 
-engine = create_engine('mysql://phpmyadmin:pass@db:3306/stocksvision', convert_unicode=True)
+engine = create_engine(mysqlCreds, convert_unicode=True)
 db_session = scoped_session(sessionmaker(autocommit=False,
                                          autoflush=False,
                                          bind=engine))

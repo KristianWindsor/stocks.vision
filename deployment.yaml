@@ -36,6 +36,9 @@ spec:
 # crawler              
         - name: crawler
           image: kristianwindsor/stocksvision-crawler
+          env:
+            - name: MYSQL_HOSTNAME
+              value: localhost
           resources:
             requests:
               cpu: 20m
@@ -47,6 +50,9 @@ spec:
           resources:
             requests:
               cpu: 20m
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: pass
           volumeMounts:
            - name: stocksvision-mysql
              mountPath: /var/lib/mysql
@@ -56,11 +62,9 @@ spec:
           ports:
             - containerPort: 8080
               name: phpmyadmin
-          # env:
-          #   - name: PMA_HOST
-          #     value: stocksvision
-          #   - name: MYSQL_ROOT_PASSWORD
-          #     value: pass
+          env:
+            - name: PMA_HOST
+              value: 127.0.0.1
           resources:
             requests:
               cpu: 5m
