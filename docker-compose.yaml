@@ -3,6 +3,8 @@ services:
   db:
     image: kristianwindsor/stocksvision-mysql
     command: --default-authentication-plugin=mysql_native_password
+    ports:
+      - 3306:3306
     restart: always
     volumes:
       - ./mysql/mysql-data:/var/lib/mysql
@@ -29,8 +31,8 @@ services:
       - ./backend/src/:/app/
   crawler:
     image: kristianwindsor/stocksvision-crawler
+    ports:
+      - 8083:8083
     restart: always
-    environment:
-      - SQLALCHEMY_TRACK_MODIFICATIONS=True
     volumes:
       - ./crawler/src/:/app/
