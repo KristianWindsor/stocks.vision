@@ -36,6 +36,8 @@ spec:
 # crawler              
         - name: crawler
           image: kristianwindsor/stocksvision-crawler
+          ports:
+            - containerPort: 8083
           env:
             - name: MYSQL_HOSTNAME
               value: localhost

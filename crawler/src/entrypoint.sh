@@ -14,5 +14,5 @@ done
 # update database
 python3 database.py
 
-# run crawler
-python3 crawler.py
+# run flask server
+python3 app.py

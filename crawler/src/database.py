@@ -1,46 +1,49 @@
 from sqlalchemy import *
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import scoped_session, sessionmaker
+import os
 try:
 	import pymysql
 	pymysql.install_as_MySQLdb()
 except:
 	pass
-from flask_migrate import Migrate
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import scoped_session, sessionmaker
-import os
  
 
 Base = declarative_base()
 
 mysqlCreds = 'mysql://phpmyadmin:pass@' + os.environ['MYSQL_HOSTNAME'] + ':3306/stocksvision'
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = mysqlCreds
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
 
+class StockData(Base):
+	__tablename__ = 'stock_data'
+	id = Column(Integer(), primary_key=True)
+	ticker = Column(String(5), nullable=False)
+	open_price = Column(Numeric(11,4))
+	high_price = Column(Numeric(11,4))
+	low_price = Column(Numeric(11,4))
+	close_price = Column(Numeric(11,4))
+	volume = Column(Integer())
+	date = Column(Date(), nullable=False)
 
-class User(Base):
-    __tablename__ = 'user'
-    id = Column(db.Integer, primary_key=True)
-    name = Column(String(251))
+class RedditStocksPortfolioComment(Base):
+	__tablename__ = 'reddit_stocks_portfolio_comment'
+	id = Column(Integer(), primary_key=True)
+	user = Column(String(40))
+	karma = Column(Integer())
+	date = Column(Date(), nullable=False)
 
-class Person(Base):
-    __tablename__ = 'person'
-    id = Column(Integer, primary_key=True)
-    name = Column(String(250), nullable=False)
+class RedditStocksPortfolioValue(Base):
+	__tablename__ = 'reddit_stocks_portfolio_value'
+	comment_id = Column(Integer(), primary_key=True)
+	ticker = Column(String(5), nullable=False)
+	percent = Column(Numeric(11,4))
  
 
 
+
 engine = create_engine(mysqlCreds, convert_unicode=True)
-db_session = scoped_session(sessionmaker(autocommit=False,
-                                         autoflush=False,
-                                         bind=engine))
+db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base.query = db_session.query_property()
 Base.metadata.create_all(bind=engine)
