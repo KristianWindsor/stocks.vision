@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 
 # wait for mysql
 until [ -n "$mysqlIsRunning" ]
@@ -10,6 +9,8 @@ do
 	fi
 	sleep 5
 done
+
+set -x
 
 # update database
 python3 database.py

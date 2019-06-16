@@ -1,7 +1,6 @@
-FROM python:3.6
+FROM python:3.7
 
-RUN apt-get update && \
-	apt-get install -y telnet
+ENV PYTHONUNBUFFERED=0
 
 COPY src /app/
 WORKDIR /app/

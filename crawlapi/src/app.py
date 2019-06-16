@@ -16,16 +16,26 @@ import crawlers
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+
 #
-# index
+# Run Script
 #
-@app.route('/<crawlerName>/<timeLength>/<token>', methods=["POST"])
-def submitError(crawlerName, timeLength, token):
+@app.route('/', methods=["GET"])
+def index():
+	return '200. we are ready to go.'
+#
+# Run Script
+#
+@app.route('/runScript', methods=["POST"])
+def runScript():
+	#crawlerName = request.form.get('crawlerName')
+	#startDate = request.form.get('startDate')
+	#token = request.form.get('token')
 	# validate
-	if token != 'hello':
-		return 'nice try.'
+	#if token != 'hello':
+	#	return 'nice try.'
 	# run script
-	output = getattr(crawlers, crawlerName).main(stock)
+	#output = getattr(crawlers, crawlerName).main(stock)
 	# return output
 	return '200. I got the data and put it in the database for ya ;)'
 

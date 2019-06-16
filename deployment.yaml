@@ -22,42 +22,36 @@ spec:
           image: kristianwindsor/stocksvision-webui
           ports:
             - containerPort: 80
-          resources:
-            requests:
-              cpu: 20m
 # backend              
         - name: backend
           image: kristianwindsor/stocksvision-backend
           ports:
             - containerPort: 5000
-          resources:
-            requests:
-              cpu: 20m
-# crawler              
-        - name: crawler
-          image: kristianwindsor/stocksvision-crawler
-          ports:
-            - containerPort: 8083
-          env:
-            - name: MYSQL_HOSTNAME
-              value: localhost
-          resources:
-            requests:
-              cpu: 20m
 # mysql              
         - name: mysql
           image: kristianwindsor/stocksvision-mysql
           ports:
             - containerPort: 3306
-          resources:
-            requests:
-              cpu: 20m
           env:
             - name: MYSQL_ROOT_PASSWORD
               value: pass
           volumeMounts:
            - name: stocksvision-mysql
              mountPath: /var/lib/mysql
+# crawl api              
+        - name: crawlapi
+          image: kristianwindsor/stocksvision-crawlapi
+          ports:
+            - containerPort: 8083
+          env:
+            - name: MYSQL_HOSTNAME
+              value: localhost
+# crawl scheduler      
+        - name: crawlscheduler
+          image: kristianwindsor/stocksvision-crawlscheduler
+          env:
+            - name: CRAWLAPI_HOSTNAME
+              value: localhost
 # phpmyadmin              
         - name: phpmyadmin
           image: kristianwindsor/stocksvision-phpmyadmin
@@ -67,9 +61,6 @@ spec:
           env:
             - name: PMA_HOST
               value: 127.0.0.1
-          resources:
-            requests:
-              cpu: 5m
 #
       imagePullSecrets:
         - name: dockerhub

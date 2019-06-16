@@ -10,6 +10,8 @@ services:
       - ./mysql/mysql-data:/var/lib/mysql
     environment:
       - MYSQL_ROOT_PASSWORD=pass
+    tty: true
+    stdin_open: true
   webui:
     image: kristianwindsor/stocksvision-webui
     ports:
@@ -17,6 +19,8 @@ services:
     restart: always
     volumes:
       - ./webui/src:/usr/local/apache2/htdocs/
+    tty: true
+    stdin_open: true
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
@@ -25,6 +29,8 @@ services:
       - PMA_USER=phpmyadmin
       - PMA_PASSWORD=pass
     restart: always
+    tty: true
+    stdin_open: true
   backend:
     image: kristianwindsor/stocksvision-backend
     ports:
@@ -32,12 +38,25 @@ services:
     restart: always
     volumes:
       - ./backend/src/:/app/
-  crawler:
-    image: kristianwindsor/stocksvision-crawler
+    tty: true
+    stdin_open: true
+  crawlapi:
+    image: kristianwindsor/stocksvision-crawlapi
     environment:
       - MYSQL_HOSTNAME=db
     ports:
       - 8083:8083
     restart: always
     volumes:
-      - ./crawler/src/:/app/
+      - ./crawlapi/src/:/app/
+    tty: true
+    stdin_open: true
+  crawlscheduler:
+    image: kristianwindsor/stocksvision-crawlscheduler
+    environment:
+      - CRAWLAPI_HOSTNAME=crawlapi
+    restart: always
+    volumes:
+      - ./crawlscheduler/src/:/app/
+    tty: true
+    stdin_open: true
