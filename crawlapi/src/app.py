@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from flask import Flask
 from flask import jsonify
+from flask import request
 
 # write each module name in __init__.py so they can import successfully
 from os.path import dirname, basename, isfile, join
@@ -14,7 +15,7 @@ import crawlers
 
 
 app = Flask(__name__)
-app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['CORS_HEADERS'] = 'Content-type: application/json'
 
 
 #
@@ -28,15 +29,19 @@ def index():
 #
 @app.route('/runScript', methods=["POST"])
 def runScript():
-	#crawlerName = request.form.get('crawlerName')
-	#startDate = request.form.get('startDate')
-	#token = request.form.get('token')
+	data = request.json
+	crawlerName = data['crawlerName']
+	startDate = data['startDate']
+	token = data['token']
+	print(crawlerName)
+	print(startDate)
+	print(token)
 	# validate
-	#if token != 'hello':
-	#	return 'nice try.'
+	if token != 'hello':
+		return 'nice try.'
 	# run script
-	#output = getattr(crawlers, crawlerName).main(stock)
-	# return output
+	output = getattr(crawlers, crawlerName).main()
+	#return token
 	return '200. I got the data and put it in the database for ya ;)'
 
 
