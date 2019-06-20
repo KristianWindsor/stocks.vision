@@ -16,6 +16,12 @@ mysqlCreds = 'mysql://phpmyadmin:pass@' + os.environ['MYSQL_HOSTNAME'] + ':3306/
 
 
 
+class Stocks(Base):
+	__tablename__ = 'stocks'
+	ticker = Column(String(5), primary_key=True)
+	name = Column(String(200)) # should find character limit
+	etf = Column(String(1)) # should be boolean
+
 class StockData(Base):
 	__tablename__ = 'stock_data'
 	id = Column(Integer(), primary_key=True)

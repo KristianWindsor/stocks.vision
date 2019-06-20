@@ -31,22 +31,19 @@ def index():
 def runScript():
 	data = request.json
 	crawlerName = data['crawlerName']
-	startDate = data['startDate']
 	token = data['token']
-	print(crawlerName)
-	print(startDate)
-	print(token)
 	# validate
 	if token != 'hello':
 		return 'nice try.'
 	#
 	if crawlerName == 'StockData':
+		# startDate stockTicker
+		startDate = data['startDate']
 		stockTicker = data['stockTicker']
-		# run script
 		output = getattr(crawlers, crawlerName).main(startDate, stockTicker)
 	else:
-		# run script
-		output = getattr(crawlers, crawlerName).main(startDate)
+		# no arguments
+		output = getattr(crawlers, crawlerName).main()
 	# return
 	return '200. I got the data and put it in the database for ya ;)'
 

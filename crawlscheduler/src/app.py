@@ -4,6 +4,16 @@ import json
 import time
 import os
 
+
+
+# get list of all stocks
+# check if the data is there
+# maybe get the data everytime or use a cronjob
+# if the data is not there, tell crawlapi to get it
+# once the data is there, put it into a local variable
+
+# get data on each stock
+# loop over that motherfackin list
 header = {
 	"Content-Type":"application/json"
 }
