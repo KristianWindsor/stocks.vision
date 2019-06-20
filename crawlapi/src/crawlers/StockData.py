@@ -1,6 +1,5 @@
 #!/usr/bin/python
 from sqlalchemy import *
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 import os
 try:
@@ -8,6 +7,7 @@ try:
 	pymysql.install_as_MySQLdb()
 except:
 	pass
+import requests
 # tables
 from database import StockData
 
@@ -16,10 +16,29 @@ mysqlCreds = 'mysql://phpmyadmin:pass@' + os.environ['MYSQL_HOSTNAME'] + ':3306/
 engine = create_engine(mysqlCreds, convert_unicode=True)
  
 
-def main():
-	db_session = scoped_session(sessionmaker(autocommit=True, autoflush=False, bind=engine))
+def main(startDate, stockTicker):
+	dbSession = scoped_session(sessionmaker(autocommit=True, autoflush=False, bind=engine))
 
-	newStockData = StockData(ticker='TSLA', date='2019-06-12')
-	db_session.add(newStockData)
+	alphavantageURL = 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+stockTicker+'&outputsize=full&apikey=0SV1D44TD1QQXIZK'
+	theData = requests.get(alphavantageURL).json()
+	if "Error Message" in theData:
+		print("shit." + theData["Error Message"])
+	else:
+		for majorkey, subdict in theData["Time Series (Daily)"].items():
+			# get values from json
+			open_price = subdict['1. open']
+			high_price = subdict['2. high']
+			low_price = subdict['3. low']
+			close_price = subdict['4. close']
+			volume = subdict['5. volume']
+			date = majorkey
+			# if ticker & date don't match an existing row
+			exists = dbSession.query(
+				dbSession.query(StockData).filter_by(ticker=stockTicker, date=date).exists()
+			).scalar()
+			if not exists:
+				# add the row
+				newStockData = StockData(ticker=stockTicker, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume, date=date)
+				dbSession.add(newStockData)
 
-	db_session.flush()
+	dbSession.flush()

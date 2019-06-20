@@ -10,6 +10,7 @@ header = {
 data = {
 	"crawlerName": "StockData",
 	"startDate": "2019-01-15",
+	"stockTicker": "AAPL",
 	"token": "hello"
 }
 url = 'http://' + os.environ['CRAWLAPI_HOSTNAME'] + ':8083/runScript'

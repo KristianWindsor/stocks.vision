@@ -39,9 +39,15 @@ def runScript():
 	# validate
 	if token != 'hello':
 		return 'nice try.'
-	# run script
-	output = getattr(crawlers, crawlerName).main()
-	#return token
+	#
+	if crawlerName == 'StockData':
+		stockTicker = data['stockTicker']
+		# run script
+		output = getattr(crawlers, crawlerName).main(startDate, stockTicker)
+	else:
+		# run script
+		output = getattr(crawlers, crawlerName).main(startDate)
+	# return
 	return '200. I got the data and put it in the database for ya ;)'
 
 

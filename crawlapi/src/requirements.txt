@@ -2,3 +2,4 @@ sqlalchemy
 pymysql
 cryptography
 flask
+requests
