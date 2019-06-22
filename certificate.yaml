@@ -11,6 +11,7 @@ spec:
   dnsNames:
   - stocks.vision
   - api.stocks.vision
+  - crawlapi.stocks.vision
   - phpmyadmin.stocks.vision
   acme:
     config:
@@ -20,4 +21,5 @@ spec:
       domains:
       - stocks.vision
       - api.stocks.vision
+      - crawlapi.stocks.vision
       - phpmyadmin.stocks.vision

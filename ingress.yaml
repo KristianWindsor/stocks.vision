@@ -26,6 +26,13 @@ spec:
         backend:
           serviceName: stocksvision
           servicePort: 5000
+  - host: crawlapi.stocks.vision
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: stocksvision
+          servicePort: 8083
   - host: phpmyadmin.stocks.vision
     http:
       paths:
@@ -38,4 +45,5 @@ spec:
     hosts:
     - stocks.vision
     - api.stocks.vision
+    - crawlapi.stocks.vision
     - phpmyadmin.stocks.vision

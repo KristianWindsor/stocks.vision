@@ -26,12 +26,12 @@ class StockData(Base):
 	__tablename__ = 'stock_data'
 	id = Column(Integer(), primary_key=True)
 	ticker = Column(String(5), nullable=False)
+	date = Column(Date(), nullable=False)
 	open_price = Column(Numeric(11,4))
 	high_price = Column(Numeric(11,4))
 	low_price = Column(Numeric(11,4))
 	close_price = Column(Numeric(11,4))
 	volume = Column(Integer())
-	date = Column(Date(), nullable=False)
 
 class RedditStocksPortfolioComment(Base):
 	__tablename__ = 'reddit_stocks_portfolio_comment'
