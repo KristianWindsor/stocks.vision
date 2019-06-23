@@ -3,30 +3,47 @@ import requests
 import json
 import time
 import os
-
+import pymysql
 
 
 # get list of all stocks
 # check if the data is there
-# maybe get the data everytime or use a cronjob
-# if the data is not there, tell crawlapi to get it
-# once the data is there, put it into a local variable
+def crawlapi(data):
+	headers = { "Content-Type":"application/json" }
+	url = 'http://' + os.environ['CRAWLAPI_HOSTNAME'] + ':8083/runScript'
+	res = requests.post(url, data=json.dumps(data), headers=headers)
+	print(res.text)
 
-# get data on each stock
-# loop over that motherfackin list
-header = {
-	"Content-Type":"application/json"
-}
-data = {
-	"crawlerName": "StockData",
-	"startDate": "2019-01-15",
-	"stockTicker": "AAPL",
+
+db = pymysql.connect(
+	host='db',
+	user='phpmyadmin',
+	passwd='pass',
+	db='stocksvision',
+	autocommit=True
+)
+cursor = db.cursor(pymysql.cursors.DictCursor)
+
+
+
+crawlapi({
+	"crawlerName": "Stocks",
 	"token": "hello"
-}
-url = 'http://' + os.environ['CRAWLAPI_HOSTNAME'] + ':8083/runScript'
-res = requests.post(url, data=json.dumps(data), headers=header)
+})
 
-print(res.text)
+
+listOfAllStocks = cursor.execute("SELECT ticker FROM stocks")
+for row in cursor.fetchall():
+	stockTicker = row['ticker']
+	print('StockData: ' + stockTicker)
+	crawlapi({
+		"crawlerName": "StockData",
+		"startDate": "2019-01-15",
+		"stockTicker": stockTicker,
+		"token": "hello"
+	})
+	time.sleep(2)
+
 
 while True:
 	time.sleep(1)

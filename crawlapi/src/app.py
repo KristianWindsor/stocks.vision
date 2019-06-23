@@ -23,7 +23,7 @@ app.config['CORS_HEADERS'] = 'Content-type: application/json'
 #
 @app.route('/', methods=["GET"])
 def index():
-	return '200. we are ready to go.'
+	return '200. ready to rock and roll.'
 #
 # Run Script
 #
@@ -45,7 +45,7 @@ def runScript():
 		# no arguments
 		output = getattr(crawlers, crawlerName).main()
 	# return
-	return '200. I got the data and put it in the database for ya ;)'
+	return '200. all is good in the hood.'
 
 
 
