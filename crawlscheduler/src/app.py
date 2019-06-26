@@ -16,7 +16,7 @@ def crawlapi(data):
 
 
 db = pymysql.connect(
-	host='db',
+	host=os.environ['MYSQL_HOSTNAME'],
 	user='phpmyadmin',
 	passwd='pass',
 	db='stocksvision',
@@ -25,24 +25,35 @@ db = pymysql.connect(
 cursor = db.cursor(pymysql.cursors.DictCursor)
 
 
-
+# Stocks
 crawlapi({
 	"crawlerName": "Stocks",
 	"token": "hello"
 })
 
 
-listOfAllStocks = cursor.execute("SELECT ticker FROM stocks")
-for row in cursor.fetchall():
-	stockTicker = row['ticker']
-	print('StockData: ' + stockTicker)
-	crawlapi({
-		"crawlerName": "StockData",
-		"startDate": "2019-01-15",
-		"stockTicker": stockTicker,
-		"token": "hello"
-	})
-	time.sleep(2)
+# Reddit Wallstreetbets
+crawlapi({
+	"crawlerName": "RedditStocksPortfolio",
+	"token": "hello"
+})
+
+
+# Stock Data
+def getAllStockData():
+	listOfAllStocks = cursor.execute("SELECT ticker FROM stocks")
+	for row in cursor.fetchall():
+		stockTicker = row['ticker']
+		doesDataAlreadyExist = cursor.execute('SELECT * FROM stock_data WHERE ticker = "' + stockTicker + '"')
+		if doesDataAlreadyExist == 0:
+			print('StockData: ' + stockTicker)
+			crawlapi({
+				"crawlerName": "StockData",
+				"startDate": "2019-01-15",
+				"stockTicker": stockTicker,
+				"token": "hello"
+			})
+			time.sleep(5)
 
 
 while True:

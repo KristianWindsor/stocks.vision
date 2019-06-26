@@ -8,11 +8,16 @@ from os.path import dirname, basename, isfile, join
 import glob
 modules = glob.glob(join(dirname(__file__), "crawlers/*.py"))
 __all__ = [ basename(f)[:-3] for f in modules if isfile(f) and not f.endswith('__init__.py')]
-text_file = open("crawlers/__init__.py", "w")
-text_file.write('__all__ = ' + str(__all__) + '\nfrom . import *')
-text_file.close()
+initFileContent = ''
+with open('crawlers/__init__.py', 'r') as f:
+	for line in f:
+		if line.lower().startswith('__all__'):
+			line = '__all__ = ' + str(__all__) + '\n'
+		initFileContent += line
+f = open('crawlers/__init__.py', 'w')
+f.write(initFileContent)
+f.close()
 import crawlers
-
 
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-type: application/json'
@@ -45,7 +50,7 @@ def runScript():
 		# no arguments
 		output = getattr(crawlers, crawlerName).main()
 	# return
-	return '200. all is good in the hood.'
+	return '200. ' + crawlerName + ' success.'
 
 
 

@@ -2,14 +2,8 @@
 from sqlalchemy import *
 from sqlalchemy.orm import scoped_session, sessionmaker
 import os
-try:
-	import pymysql
-	pymysql.install_as_MySQLdb()
-except:
-	pass
 import requests
 import ftplib
-# tables
 from database import Stocks
 
 
@@ -47,4 +41,4 @@ def main():
 			line = fp.readline()
 			cnt += 1
 	os.remove(filename)
-	dbSession.flush()
+	dbSession.close()

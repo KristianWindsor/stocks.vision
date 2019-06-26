@@ -54,6 +54,7 @@ services:
   crawlscheduler:
     image: kristianwindsor/stocksvision-crawlscheduler
     environment:
+      - MYSQL_HOSTNAME=db
       - CRAWLAPI_HOSTNAME=crawlapi
     restart: always
     volumes:

@@ -2,13 +2,7 @@
 from sqlalchemy import *
 from sqlalchemy.orm import scoped_session, sessionmaker
 import os
-try:
-	import pymysql
-	pymysql.install_as_MySQLdb()
-except:
-	pass
 import requests
-# tables
 from database import StockData
 
 
@@ -23,7 +17,7 @@ def main(startDate, stockTicker):
 	theData = requests.get(alphavantageURL).json()
 	if "Error Message" in theData:
 		print("shit." + theData["Error Message"])
-	else:
+	elif "Time Series (Daily)" in theData:
 		for majorkey, subdict in theData["Time Series (Daily)"].items():
 			# get values from json
 			open_price = subdict['1. open']
@@ -40,5 +34,7 @@ def main(startDate, stockTicker):
 				# add the row
 				newStockData = StockData(ticker=stockTicker, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume, date=date)
 				dbSession.add(newStockData)
+	else:
+		print('shit. ' + theData)
 
-	dbSession.flush()
+	dbSession.close()

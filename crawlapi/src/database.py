@@ -10,7 +10,6 @@ except:
  
 
 Base = declarative_base()
-
 mysqlCreds = 'mysql://phpmyadmin:pass@' + os.environ['MYSQL_HOSTNAME'] + ':3306/stocksvision'
 
 

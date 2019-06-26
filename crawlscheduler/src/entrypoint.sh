@@ -2,6 +2,6 @@
 
 set -x
 
-sleep 30
+sleep 60
 
 python3 app.py
