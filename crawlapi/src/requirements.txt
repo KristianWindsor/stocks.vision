@@ -3,3 +3,4 @@ pymysql
 cryptography
 flask
 requests
+praw
