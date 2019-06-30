@@ -37,4 +37,5 @@ def main(startDate, stockTicker):
 	else:
 		print('shit. ' + theData)
 
+	dbSession.flush()
 	dbSession.close()

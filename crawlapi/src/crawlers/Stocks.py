@@ -9,27 +9,30 @@ from database import Stocks
 
 mysqlCreds = 'mysql://phpmyadmin:pass@' + os.environ['MYSQL_HOSTNAME'] + ':3306/stocksvision'
 engine = create_engine(mysqlCreds, convert_unicode=True)
- 
 
-def main():
-	dbSession = scoped_session(sessionmaker(autocommit=True, autoflush=False, bind=engine))
-
-	filename = 'nasdaqlisted.txt'
-	ftp = ftplib.FTP("ftp.nasdaqtrader.com")
-	ftp.login()
-	ftp.cwd("/SymbolDirectory")
+def getFileAndParseData(dbSession, ftp, filename):
 	ftp.retrbinary("RETR " + filename, open(filename, 'wb').write)
-	# read lines
 	with open(filename) as fp:  
 		line = fp.readline()
-		cnt = 1
+		legend = line.strip().split('|')
+		if 'nasdaq' in filename:
+			indexTicker = legend.index('Symbol')
+		else:
+			indexTicker = legend.index('NASDAQ Symbol')
+		indexName = legend.index('Security Name')
+		indexETF = legend.index('ETF')
 		while line:
+			line = fp.readline()
 			stockData = line.strip().split('|')
 			# if line is valid
-			if stockData[6] == 'Y' or stockData[6] == 'N':
-				ticker = stockData[0]
-				name = stockData[1]
-				etf = stockData[6]
+			if len(stockData) == 8 and (stockData[indexETF] == 'Y' or stockData[indexETF] == 'N'):
+				ticker = stockData[indexTicker]
+				name = stockData[indexName]
+				etf = int(stockData[indexETF].replace('N','0').replace('Y','1'))
+				if ' - ' in name:
+					name = name.split(' - ')[0]
+				if ', ' in name:
+					name = name.split(', ')[0]
 				# if row not exists
 				exists = dbSession.query(
 					dbSession.query(Stocks).filter_by(ticker=ticker).exists()
@@ -38,7 +41,19 @@ def main():
 					# add the row
 					newStockData = Stocks(ticker=ticker, name=name, etf=etf)
 					dbSession.add(newStockData)
-			line = fp.readline()
-			cnt += 1
+			else:
+				print('oops')
 	os.remove(filename)
+
+def main():
+	dbSession = scoped_session(sessionmaker(autocommit=True, autoflush=False, bind=engine))
+
+	ftp = ftplib.FTP("ftp.nasdaqtrader.com")
+	ftp.login()
+	ftp.cwd("/SymbolDirectory")
+
+	getFileAndParseData(dbSession, ftp, 'nasdaqlisted.txt')
+	getFileAndParseData(dbSession, ftp, 'otherlisted.txt')
+
+	dbSession.flush()
 	dbSession.close()

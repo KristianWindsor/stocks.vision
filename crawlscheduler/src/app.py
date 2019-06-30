@@ -32,7 +32,7 @@ crawlapi({
 })
 
 
-# Reddit Wallstreetbets
+# Reddit Stocks Portfolio
 crawlapi({
 	"crawlerName": "RedditStocksPortfolio",
 	"token": "hello"
@@ -54,6 +54,7 @@ def getAllStockData():
 				"token": "hello"
 			})
 			time.sleep(5)
+#getAllStockData()
 
 
 while True:
