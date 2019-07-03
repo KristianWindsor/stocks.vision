@@ -26,17 +26,17 @@ cursor = db.cursor(pymysql.cursors.DictCursor)
 
 
 # Stocks
-crawlapi({
-	"crawlerName": "Stocks",
-	"token": "hello"
-})
+# crawlapi({
+# 	"crawlerName": "Stocks",
+# 	"token": "hello"
+# })
 
 
 # Reddit Stocks Portfolio
-crawlapi({
-	"crawlerName": "RedditStocksPortfolio",
-	"token": "hello"
-})
+# crawlapi({
+# 	"crawlerName": "RedditStocksPortfolio",
+# 	"token": "hello"
+# })
 
 
 # Stock Data

@@ -37,54 +37,56 @@ def main():
 		stockNameList.append(stock.name)
 
 	# Get reddit submissions
-	submission = reddit.submission(id='bvk4ry')
-	# Get reddit comments
-	submission.comment_sort = 'new'
-	top_level_comments = list(submission.comments)
-	# print(top_level_comments)
-	for comment in submission.comments.list():
-		if comment.body.count('%') > 2:
-			portfolio = {}
-			s = StringIO(comment.body)
-			# print(s)
-			for line in s:
-				if line.count('%') == 1:
-					percentage = '?'
-					ticker = '?'
-					for word in line.split(' '):
-						if word.count('%') == 1:
-							percentage = re.sub(r'[^\d.]+', '', word)
-						if word in stockTickerList:
-							ticker = word
-					if ticker == '?':
-						for stockName in stockNameList:
-							if stockName.replace(', Inc.', '').replace(' Inc.', '') in line:
-								index = stockNameList.index(stockName)
-								ticker = stockTickerList[index]
-					if percentage != '?' and ticker != '?':
-						portfolio[ticker] = percentage
-			if portfolio == {}:
-				print('fail!')
-			else:
-				if comment.author:
-					portfolio = normalizePortfolio(portfolio)
-					reddit_id = str(comment.id)
-					user = str(comment.author)
-					karma = int(comment.ups - comment.downs)
-					date = datetime.utcfromtimestamp(comment.created).strftime('%Y-%m-%d')
-					#
-					exists = dbSession.query(
-						dbSession.query(RedditStocksPortfolioComment).filter_by(reddit_id=reddit_id).exists()
-					).scalar()
-					if not exists:
-						newCommentRow = RedditStocksPortfolioComment(reddit_id=reddit_id, user=user, karma=karma, date=date)
-						dbSession.add(newCommentRow)
-						dbSession.flush()
-						# print(newCommentRow)
-						for ticker in portfolio:
-							newPortfolioValueRow = RedditStocksPortfolioValue(comment_id=newCommentRow.id, ticker=ticker, percent=portfolio[ticker])
-							dbSession.add(newPortfolioValueRow)
-				# else:
-				# 	print('fail!!')
+	for submission in reddit.subreddit('stocks').search('Rate My Portfolio - r/Stocks Quarterly Thread'):
+		print(submission.title)
+		# Get reddit comments
+		submission.comments.replace_more(limit=None, threshold=0)
+		for comment in submission.comments.list():
+			if comment.body.count('%') > 2:
+				portfolio = {}
+				s = StringIO(comment.body)
+				# print(s)
+				for line in s:
+					if line.count('%') == 1:
+						percentage = '?'
+						ticker = '?'
+						for word in line.split(' '):
+							if word.count('%') == 1:
+								percentage = re.sub(r'[^\d.]+', '', word)
+							if word in stockTickerList:
+								ticker = word
+						if ticker == '?':
+							for stockName in stockNameList:
+								if stockName.replace(', Inc.', '').replace(' Inc.', '') in line:
+									index = stockNameList.index(stockName)
+									ticker = stockTickerList[index]
+						if len(ticker) > 0:
+							try:
+								portfolio[ticker] = float(percentage)
+							except ValueError:
+								pass
+				if portfolio == {}:
+					print('fail!')
+				else:
+					if comment.author:
+						portfolio = normalizePortfolio(portfolio)
+						reddit_id = str(comment.id)
+						user = str(comment.author)
+						karma = int(comment.ups - comment.downs)
+						date = datetime.utcfromtimestamp(comment.created).strftime('%Y-%m-%d')
+						#
+						exists = dbSession.query(
+							dbSession.query(RedditStocksPortfolioComment).filter_by(reddit_id=reddit_id).exists()
+						).scalar()
+						if not exists:
+							newCommentRow = RedditStocksPortfolioComment(reddit_id=reddit_id, user=user, karma=karma, date=date)
+							dbSession.add(newCommentRow)
+							dbSession.flush()
+							# print(newCommentRow)
+							for ticker in portfolio:
+								newPortfolioValueRow = RedditStocksPortfolioValue(comment_id=newCommentRow.id, ticker=ticker, percent=portfolio[ticker])
+								dbSession.add(newPortfolioValueRow)
+					# else:
+					# 	print('fail!!')
 	dbSession.flush()
 	dbSession.close()

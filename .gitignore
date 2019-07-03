@@ -1,3 +1,5 @@
 .DS_Store
 *.pyc
 mysql-data
+environment.env
+secret.yaml

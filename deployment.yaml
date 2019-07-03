@@ -46,6 +46,23 @@ spec:
           env:
             - name: MYSQL_HOSTNAME
               value: localhost
+            - name: REDDIT_USERNAME
+              value: '84935'
+            - name: REDDIT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: stocksvision-env
+                  key: reddit-password
+            - name: REDDIT_CLIENTID
+              valueFrom:
+                secretKeyRef:
+                  name: stocksvision-env
+                  key: reddit-clientid
+            - name: REDDIT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: stocksvision-env
+                  key: reddit-secret
 # crawl scheduler      
         - name: crawlscheduler
           image: kristianwindsor/stocksvision-crawlscheduler

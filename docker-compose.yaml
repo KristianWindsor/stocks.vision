@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 services:
   db:
     image: kristianwindsor/stocksvision-mysql
@@ -44,6 +44,8 @@ services:
     image: kristianwindsor/stocksvision-crawlapi
     environment:
       - MYSQL_HOSTNAME=db
+    env_file:
+      - environment.env
     ports:
       - 8083:8083
     restart: always
