@@ -33,6 +33,8 @@ services:
     stdin_open: true
   backend:
     image: kristianwindsor/stocksvision-backend
+    environment:
+      - MYSQL_HOSTNAME=db
     ports:
       - 8082:5000
     restart: always

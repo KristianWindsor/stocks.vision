@@ -25,6 +25,9 @@ spec:
 # backend              
         - name: backend
           image: kristianwindsor/stocksvision-backend
+          env:
+            - name: MYSQL_HOSTNAME
+              value: localhost
           ports:
             - containerPort: 5000
 # mysql              
