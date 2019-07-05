@@ -48,19 +48,22 @@ def main():
 				# print(s)
 				for line in s:
 					if line.count('%') == 1:
-						percentage = '?'
-						ticker = '?'
+						percentage = None
+						ticker = None
+						# iterate over each word
 						for word in line.split(' '):
 							if word.count('%') == 1:
 								percentage = re.sub(r'[^\d.]+', '', word)
 							if word in stockTickerList:
 								ticker = word
-						if ticker == '?':
+						# next try looking for company name
+						if ticker == None:
 							for stockName in stockNameList:
 								if stockName.replace(', Inc.', '').replace(' Inc.', '') in line:
 									index = stockNameList.index(stockName)
 									ticker = stockTickerList[index]
-						if len(ticker) > 0:
+						# save values
+						if ticker != None and percentage != None:
 							try:
 								portfolio[ticker] = float(percentage)
 							except ValueError:
@@ -82,11 +85,9 @@ def main():
 							newCommentRow = RedditStocksPortfolioComment(reddit_id=reddit_id, user=user, karma=karma, date=date)
 							dbSession.add(newCommentRow)
 							dbSession.flush()
-							# print(newCommentRow)
 							for ticker in portfolio:
 								newPortfolioValueRow = RedditStocksPortfolioValue(comment_id=newCommentRow.id, ticker=ticker, percent=portfolio[ticker])
 								dbSession.add(newPortfolioValueRow)
-					# else:
-					# 	print('fail!!')
 	dbSession.flush()
 	dbSession.close()
+
