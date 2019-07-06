@@ -96,7 +96,7 @@ function doMath() {
 	if (denominator > 0) {
 		$('.fourth.output h2').html('Results for ' + settings.stock.ticker);
 		var averageIndicatorValue = numerator / denominator;
-		$('#averageIndicatorValue').html((Math.round(averageIndicatorValue * 100000) / 100000) + '%');
+		$('#averageIndicatorValue').html((Math.round(averageIndicatorValue * 10) / 10) + '%');
 		// multiply by money
 		var cashToSpend = parseFloat($('#spendableCash').val().replace(/\D/g,'')) * (averageIndicatorValue / 100);
 		cashToSpend = Math.round(cashToSpend * 100) / 100
@@ -113,9 +113,9 @@ function doMath() {
 		}
 		$('#theMove').html(numberOfStocksToBuyText);
 	} else {
-		$('#averageIndicatorValue').html('');
-		$('#cashToSpend').html('');
-		$('#theMove').html('');
+		$('#averageIndicatorValue').html('0%');
+		$('#cashToSpend').html('$0');
+		$('#theMove').html('Nothing.');
 	}
 }
 
@@ -142,10 +142,9 @@ function indicatorEnabledChanged(indicatorName) {
 
 function checkForIndicatorUpdate() {
 	// stock
-	var stock = $('#stock').val();
+	var stock = $('#stock').val().toUpperCase();
 	if (listOfAllStocks.indexOf(stock) !== -1 && settings.stock.ticker !== stock) {
 		settings.stock.ticker = stock;
-		console.log('call for ' + stock);
 		GETindicator('*');
 	}
 	// hold duration
@@ -160,7 +159,7 @@ function checkForIndicatorUpdate() {
 	}
 }
 function GETindicator(indicator) {
-	var stock = $('#stock').val();
+	var stock = $('#stock').val().toUpperCase();
 	$.ajax({
 		type: 'POST',
 		url: 'https://api.stocks.vision/indicator',
@@ -169,7 +168,6 @@ function GETindicator(indicator) {
 			'stock': stock,
 			'date': today
 		}),
-		// dataType: 'json',
 		contentType: "application/json",
 		success: function(returnData){
 			console.log(returnData);
@@ -195,10 +193,12 @@ function GETindicator(indicator) {
 							<input type="checkbox" onchange="indicatorEnabledChanged('`+indicatorName+`')" `+checkboxMaybeChecked+` /><br>
 							`+indicatorName+`
 							<input id="`+indicatorName+`" type="range" min="0" max="10" value="`+indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" onchange="indicatorWeightChanged('`+indicatorName+`');" />
-							<span class="indicatorValue">`+returnData[indicatorName]+`</span> * <span class="trackbarValue">`+indicators[indicatorName].weight+`</span>
+							<span class="indicatorValue">`+(Math.round(returnData[indicatorName] * 10) / 10)+`%</span> * <span class="trackbarValue">`+indicators[indicatorName].weight+`</span>
 						</div>
 			 		`;
 			 		$('.fourth.indicators').append(html);
+				} else {
+					$('.'+indicatorName+' .indicatorValue').html((Math.round(returnData[indicatorName] * 10) / 10) + '%');
 				}
 			});
 			// update math
@@ -209,7 +209,7 @@ function GETindicator(indicator) {
 
 
 function simulation() {
-	var stock = $('#stock').val(),
+	var stock = $('#stock').val().toUpperCase(),
 		length = settings.simulation.length,
 		simID = stock,
 		completedSimulations = {};

@@ -18,7 +18,6 @@ input, button {
 	width: 50%;
 	padding: 3% 6%;
 	vertical-align: top;
-	border: 1px solid #ccc;
 }
 .fourth.input, .fourth.output {
 	min-height: 38.2vh;
