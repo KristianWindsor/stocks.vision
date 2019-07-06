@@ -34,19 +34,18 @@ def index():
 @app.route('/indicator', methods=["POST"])
 @cross_origin()
 def indicator():
-	data = request.json
+	data = request.get_json()
 	indicator = data['indicator']
 	stock = data['stock']
 	date = data['date']
 	# run indicator py script with given stock
 	# return results
+	results = {}
 	if isinstance(indicator, (list,)):
 		print('this is a list')
-		results = 'list'
 	elif indicator == '*':
 		print('star. return all indicator values')
 		indicatorNameList = []
-		results = {}
 		for root, dirs, files in os.walk(r'indicators/'):
 			for file in files:
 				if file.endswith('.py') and '__init__' not in file:
@@ -56,9 +55,7 @@ def indicator():
 		print(results)
 	else:
 		print('this is a single indicator')
-		print(stock)
-		print(indicator)
-		results = getattr(indicators, indicator).main(stock, date)
+		results[indicator] = getattr(indicators, indicator).main(stock, date)
 	return jsonify(results)
 
 

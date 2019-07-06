@@ -7,4 +7,4 @@ WORKDIR /app/
 
 RUN pip3 install -r requirements.txt
 
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["python3","/app/app.py"]

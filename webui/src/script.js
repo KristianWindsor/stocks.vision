@@ -1,3 +1,5 @@
+//
+
 var settings = {
 	stock: {
 		ticker: 'AAPL',
@@ -34,6 +36,12 @@ var indicators = {
 	}
 };
 
+var today = new Date();
+var dd = String(today.getDate()).padStart(2, '0');
+var mm = String(today.getMonth() + 1).padStart(2, '0');
+var yyyy = today.getFullYear();
+today = yyyy + '-' + mm + '-' + dd;
+
 // set values
 function initializeHTML() {
 	$('#stock').val(settings.stock.ticker);
@@ -55,6 +63,7 @@ function initializeHTML() {
 			indicatorWeightChanged(indicatorName);
 		}
 	}
+			console.log('GET:' + indicatorName)
 	GETindicator('*');
 }
 
@@ -79,17 +88,18 @@ function doMath() {
 			var value = indicators[indicatorName].value,
 				weight = indicators[indicatorName].weight,
 				isEnabled = indicators[indicatorName].isEnabled;
-			if (isEnabled && weight > 0) {
+			if (isEnabled && weight > 0 && value) {
 				numerator += value * weight;
 				denominator += weight;
 			}
 		}
 	}
+
 	if (denominator > 0) {
 		var averageIndicatorValue = numerator / denominator;
-		$('#averageIndicatorValue').html(Math.round(averageIndicatorValue * 100000) / 100000);
+		$('#averageIndicatorValue').html((Math.round(averageIndicatorValue * 100000) / 100000) + '%');
 		// multiply by money
-		var cashToSpend = parseFloat($('#spendableCash').val().replace(/\D/g,'')) * averageIndicatorValue;
+		var cashToSpend = parseFloat($('#spendableCash').val().replace(/\D/g,'')) * (averageIndicatorValue / 100);
 		cashToSpend = Math.round(cashToSpend * 100) / 100
 		$('#cashToSpend').html('$' + cashToSpend);
 		// divide to get stocks
@@ -123,6 +133,7 @@ function indicatorWeightChanged(indicatorName) {
 }
 function indicatorEnabledChanged(indicatorName) {
 	if ($('.' + indicatorName + ' input[type="checkbox"]').is(':checked')) {
+			console.log('GET:' + indicatorName)
 		GETindicator(indicatorName)
 		indicators[indicatorName].isEnabled = true;
 	} else {
@@ -140,6 +151,7 @@ function checkForIndicatorUpdate() {
 	// enable indicator
 	if (true == false) {
 		for (var indicatorName in indicators) {
+			console.log('GET:' + indicatorName)
 			GETindicator(indicatorName);
 		}
 	}
@@ -149,12 +161,18 @@ function GETindicator(indicator) {
 	$.ajax({
 		type: 'POST',
 		url: 'https://api.stocks.vision/indicator',
-		data: { 
+		data: JSON.stringify({ 
 			'indicator': indicator, 
-			'stock': stock
-		},
+			'stock': stock,
+			'date': today
+		}),
+		// dataType: 'json',
+		contentType: "application/json",
 		success: function(returnData){
+			console.log(returnData);
 			Object.keys(returnData).forEach(function(indicatorName) {
+				console.log(indicatorName);
+				console.log(indicators['0']);
 				// update value
 				if (!indicators.hasOwnProperty(indicatorName)) {
 					indicators[indicatorName] = {
@@ -162,6 +180,7 @@ function GETindicator(indicator) {
 						value: returnData[indicatorName],
 						weight: 5
 					};
+					console.log(indicators['0']);
 				} else {
 					indicators[indicatorName].value = returnData[indicatorName];
 				}
@@ -198,6 +217,7 @@ function simulation() {
 	$.ajax({
 		type: 'POST',
 		url: 'https://api.stocks.vision/simulation',
+		dataType: 'json',
 		data: { 
 			'stock': stock,
 			'holdDuration': holdDuration, 

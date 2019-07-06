@@ -5,38 +5,33 @@ import time
 import os
 import pymysql
 
+# connect to mysql
+for i in range(100):
+	for attempt in range(5):
+		try:
+			db = pymysql.connect(
+				host=os.environ['MYSQL_HOSTNAME'],
+				user='crawlscheduler',
+				passwd='pass',
+				db='stocksvision',
+				autocommit=True
+			)
+			cursor = db.cursor(pymysql.cursors.DictCursor)
+		except:
+			time.sleep(1)
+		else:
+			break
+	else:
+		print('Trying to connect to MySQL...')
 
-# get list of all stocks
-# check if the data is there
+#
+# crawlapi function
+#
 def crawlapi(data):
 	headers = { "Content-Type":"application/json" }
 	url = 'http://' + os.environ['CRAWLAPI_HOSTNAME'] + ':8083/runScript'
 	res = requests.post(url, data=json.dumps(data), headers=headers)
 	print(res.text)
-
-
-db = pymysql.connect(
-	host=os.environ['MYSQL_HOSTNAME'],
-	user='phpmyadmin',
-	passwd='pass',
-	db='stocksvision',
-	autocommit=True
-)
-cursor = db.cursor(pymysql.cursors.DictCursor)
-
-
-# Stocks
-# crawlapi({
-# 	"crawlerName": "Stocks",
-# 	"token": "hello"
-# })
-
-
-# Reddit Stocks Portfolio
-# crawlapi({
-# 	"crawlerName": "RedditStocksPortfolio",
-# 	"token": "hello"
-# })
 
 
 # Stock Data
@@ -54,8 +49,8 @@ def getAllStockData():
 				"token": "hello"
 			})
 			time.sleep(5)
-#getAllStockData()
 
 
+# keep container alive
 while True:
 	time.sleep(1)

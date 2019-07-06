@@ -4,11 +4,13 @@ import pymysql
 from datetime import datetime, timedelta
 import dateutil.relativedelta
 import decimal
+import time
+import json
 
 
 db = pymysql.connect(
 	host=os.environ['MYSQL_HOSTNAME'],
-	user='phpmyadmin',
+	user='backend',
 	passwd='pass',
 	db='stocksvision',
 	autocommit=True
@@ -36,7 +38,6 @@ def main(stock, date):
 			else:
 				averagePortfolio[v['ticker']] += increase
 		count += 1
-	print(averagePortfolio)
 	if stock in averagePortfolio:
 		# find scale ratio
 		biggestPercent = 0

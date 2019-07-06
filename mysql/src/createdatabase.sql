@@ -1,5 +1,4 @@
 
-
 --
 -- User: backend
 --
@@ -8,11 +7,18 @@ CREATE USER backend IDENTIFIED WITH mysql_native_password BY 'pass';
 GRANT ALL PRIVILEGES ON stocksvision.* TO 'backend'@'%' WITH GRANT OPTION;
 
 --
--- User: crawler
+-- User: crawlapi
 --
 
-CREATE USER crawler IDENTIFIED WITH mysql_native_password BY 'pass';
-GRANT ALL PRIVILEGES ON stocksvision.* TO 'crawler'@'%' WITH GRANT OPTION;
+CREATE USER crawlapi IDENTIFIED WITH mysql_native_password BY 'pass';
+GRANT ALL PRIVILEGES ON stocksvision.* TO 'crawlapi'@'%' WITH GRANT OPTION;
+
+--
+-- User: crawlscheduler
+--
+
+CREATE USER crawlscheduler IDENTIFIED WITH mysql_native_password BY 'pass';
+GRANT ALL PRIVILEGES ON stocksvision.* TO 'crawlscheduler'@'%' WITH GRANT OPTION;
 
 --
 -- User: phpmyadmin
@@ -20,4 +26,3 @@ GRANT ALL PRIVILEGES ON stocksvision.* TO 'crawler'@'%' WITH GRANT OPTION;
 
 CREATE USER phpmyadmin IDENTIFIED WITH mysql_native_password BY 'pass';
 GRANT ALL PRIVILEGES ON stocksvision.* TO 'phpmyadmin'@'%' WITH GRANT OPTION;
-
