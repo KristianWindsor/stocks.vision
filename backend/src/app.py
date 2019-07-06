@@ -6,6 +6,9 @@ from flask_cors import CORS, cross_origin
 import os
 import pymysql
 import json
+import datetime
+from datetime import datetime, timedelta
+import dateutil.relativedelta
 
 # write each module name in __init__.py so they can import successfully
 from os.path import dirname, basename, isfile, join
@@ -16,6 +19,7 @@ text_file = open("indicators/__init__.py", "w")
 text_file.write('__all__ = ' + str(__all__) + '\nfrom . import *')
 text_file.close()
 import indicators
+import simulation
 
 
 app = Flask(__name__)
@@ -76,15 +80,18 @@ def indicator():
 #
 @app.route('/simulation', methods=["POST"])
 @cross_origin()
-def simulation():
-	stock = request.form.get('stock')
-	holdDuration = request.form.get('holdDuration')
-	indicatorData = request.form.get('indicators')
-	completedSimulations = request.form.get('completedSimulations')
-	# calculate which simulations to run based off of completedSimulations
-	# run simulation
+def runSimulation():
+	data = request.get_json()
+	stock = data['stock']
+	cash = 10000.00
+	completedSimulations = data['completedSimulations']
+	indicators = data['indicators']
+	endDate = datetime.now()
+	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
+	# get results
+	results = simulation.runSimulation.main(stock, indicators, startDate, endDate, cash)
 	# return results
-	return '200 OK'
+	return results
 
 #
 # stock ticker list

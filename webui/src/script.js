@@ -8,7 +8,7 @@ var settings = {
 		price: 178.97
 	},
 	simulation: {
-		length: '6 months',
+		length: 3,
 		sellStrategy: 0,
 		sellTimePeriod: '1 week'
 	},
@@ -16,26 +16,14 @@ var settings = {
 	isAnalyzing: false
 };
 var indicators = {
-	'reddit-wallstreetbets': {
+/*	'example': {
 		isEnabled: true,
 		value: undefined,
 		weight: 5
-	},
-	'reddit-stocks': {
-		isEnabled: true,
-		value: undefined,
-		weight: 5
-	},
-	'volume-increase': {
-		isEnabled: true,
-		value: undefined,
-		weight: 5
-	},
-	'example': {
-		isEnabled: true,
-		value: undefined,
-		weight: 5
-	}
+	}*/
+};
+var simulations = {
+	// stockTicker: { "1": {}, "55": {} }
 };
 
 var today = new Date();
@@ -44,13 +32,7 @@ var mm = String(today.getMonth() + 1).padStart(2, '0');
 var yyyy = today.getFullYear();
 today = yyyy + '-' + mm + '-' + dd;
 
-$.ajax({
-	type: 'GET',
-	url: 'https://api.stocks.vision/tickerlist',
-	success: function(returnData){
-		listOfAllStocks = returnData;
-	}
-});
+
 
 // set values
 function initializeHTML() {
@@ -74,6 +56,13 @@ function initializeHTML() {
 		}
 	}
 	GETindicator('*');
+	$.ajax({
+		type: 'GET',
+		url: 'https://api.stocks.vision/tickerlist',
+		success: function(returnData){
+			listOfAllStocks = returnData;
+		}
+	});
 }
 
 function startAnalyzing() {
@@ -221,22 +210,26 @@ function GETindicator(indicator) {
 
 function simulation() {
 	var stock = $('#stock').val(),
-		holdDuration = $('#holdDuration').val(),
-		indicators = {}
-		completedSimulations = '';
+		length = settings.simulation.length,
+		simID = stock,
+		completedSimulations = {};
+		if (simulations[simID] && simulations[simID][length]) {
+			completedSimulations = simulations[simID][length];
+		}
 
 	$.ajax({
 		type: 'POST',
 		url: 'https://api.stocks.vision/simulation',
-		dataType: 'json',
-		data: { 
+		data: JSON.stringify({ 
 			'stock': stock,
-			'holdDuration': holdDuration, 
+			'length': length, 
 			'indicators': indicators,
 			'completedSimulations': completedSimulations
-		},
-		success: function(msg){
-			console.log("horray! " + msg);
+		}),
+		dataType: 'json',
+		contentType: "application/json",
+		success: function(returnData){
+			console.log(returnData);
 		}
 	});
 }
