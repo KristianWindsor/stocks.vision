@@ -4,6 +4,8 @@ from flask import jsonify
 from flask import request
 from flask_cors import CORS, cross_origin
 import os
+import pymysql
+import json
 
 # write each module name in __init__.py so they can import successfully
 from os.path import dirname, basename, isfile, join
@@ -19,6 +21,16 @@ import indicators
 app = Flask(__name__)
 CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+
+
+db = pymysql.connect(
+	host=os.environ['MYSQL_HOSTNAME'],
+	user='backend',
+	passwd='pass',
+	db='stocksvision',
+	autocommit=True
+)
+cursor = db.cursor(pymysql.cursors.DictCursor)
 
 #
 # index
@@ -73,6 +85,18 @@ def simulation():
 	# run simulation
 	# return results
 	return '200 OK'
+
+#
+# stock ticker list
+#
+@app.route('/tickerlist', methods=["GET"])
+@cross_origin()
+def tickerlist():
+	listOfAllStocks = []
+	cursor.execute("SELECT ticker FROM stocks")
+	for row in cursor.fetchall():
+		listOfAllStocks.append(row['ticker'])
+	return json.dumps(listOfAllStocks)
 
 
 if __name__ == '__main__':

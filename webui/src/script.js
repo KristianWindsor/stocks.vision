@@ -1,5 +1,7 @@
 //
 
+var listOfAllStocks = [];
+
 var settings = {
 	stock: {
 		ticker: 'AAPL',
@@ -42,6 +44,14 @@ var mm = String(today.getMonth() + 1).padStart(2, '0');
 var yyyy = today.getFullYear();
 today = yyyy + '-' + mm + '-' + dd;
 
+$.ajax({
+	type: 'GET',
+	url: 'https://api.stocks.vision/tickerlist',
+	success: function(returnData){
+		listOfAllStocks = returnData;
+	}
+});
+
 // set values
 function initializeHTML() {
 	$('#stock').val(settings.stock.ticker);
@@ -63,7 +73,6 @@ function initializeHTML() {
 			indicatorWeightChanged(indicatorName);
 		}
 	}
-			console.log('GET:' + indicatorName)
 	GETindicator('*');
 }
 
@@ -96,6 +105,7 @@ function doMath() {
 	}
 
 	if (denominator > 0) {
+		$('.fourth.output h2').html('Results for ' + settings.stock.ticker);
 		var averageIndicatorValue = numerator / denominator;
 		$('#averageIndicatorValue').html((Math.round(averageIndicatorValue * 100000) / 100000) + '%');
 		// multiply by money
@@ -133,7 +143,6 @@ function indicatorWeightChanged(indicatorName) {
 }
 function indicatorEnabledChanged(indicatorName) {
 	if ($('.' + indicatorName + ' input[type="checkbox"]').is(':checked')) {
-			console.log('GET:' + indicatorName)
 		GETindicator(indicatorName)
 		indicators[indicatorName].isEnabled = true;
 	} else {
@@ -144,6 +153,12 @@ function indicatorEnabledChanged(indicatorName) {
 
 function checkForIndicatorUpdate() {
 	// stock
+	var stock = $('#stock').val();
+	if (listOfAllStocks.indexOf(stock) !== -1 && settings.stock.ticker !== stock) {
+		settings.stock.ticker = stock;
+		console.log('call for ' + stock);
+		GETindicator('*');
+	}
 	// hold duration
 	// simulation duration
 	// spendable cash
@@ -151,7 +166,6 @@ function checkForIndicatorUpdate() {
 	// enable indicator
 	if (true == false) {
 		for (var indicatorName in indicators) {
-			console.log('GET:' + indicatorName)
 			GETindicator(indicatorName);
 		}
 	}
@@ -171,8 +185,6 @@ function GETindicator(indicator) {
 		success: function(returnData){
 			console.log(returnData);
 			Object.keys(returnData).forEach(function(indicatorName) {
-				console.log(indicatorName);
-				console.log(indicators['0']);
 				// update value
 				if (!indicators.hasOwnProperty(indicatorName)) {
 					indicators[indicatorName] = {
@@ -180,7 +192,6 @@ function GETindicator(indicator) {
 						value: returnData[indicatorName],
 						weight: 5
 					};
-					console.log(indicators['0']);
 				} else {
 					indicators[indicatorName].value = returnData[indicatorName];
 				}
