@@ -7,11 +7,11 @@ CREATE USER backend IDENTIFIED WITH mysql_native_password BY 'pass';
 GRANT ALL PRIVILEGES ON stocksvision.* TO 'backend'@'%' WITH GRANT OPTION;
 
 --
--- User: crawlapi
+-- User: crawler
 --
 
-CREATE USER crawlapi IDENTIFIED WITH mysql_native_password BY 'pass';
-GRANT ALL PRIVILEGES ON stocksvision.* TO 'crawlapi'@'%' WITH GRANT OPTION;
+CREATE USER crawler IDENTIFIED WITH mysql_native_password BY 'pass';
+GRANT ALL PRIVILEGES ON stocksvision.* TO 'crawler'@'%' WITH GRANT OPTION;
 
 --
 -- User: crawlscheduler

@@ -10,7 +10,7 @@ from datetime import datetime
 from database import RedditStocksPortfolioComment, RedditStocksPortfolioValue, Stocks
 
 
-mysqlCreds = 'mysql://crawlapi:pass@' + os.environ['MYSQL_HOSTNAME'] + ':3306/stocksvision'
+mysqlCreds = 'mysql://crawler:pass@' + os.environ['MYSQL_HOSTNAME'] + ':3306/stocksvision'
 engine = create_engine(mysqlCreds, convert_unicode=True)
 reddit = praw.Reddit(client_id=os.environ['REDDIT_CLIENTID'], client_secret=os.environ['REDDIT_SECRET'], user_agent='test script', password=os.environ['REDDIT_PASSWORD'], usernanme=os.environ['REDDIT_USERNAME'])
 

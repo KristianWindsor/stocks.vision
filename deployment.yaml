@@ -45,8 +45,8 @@ spec:
            - name: stocksvision-mysql
              mountPath: /var/lib/mysql
 #            
-        - name: crawlapi
-          image: kristianwindsor/stocksvision-crawlapi
+        - name: crawler
+          image: kristianwindsor/stocksvision-crawler
           ports:
             - containerPort: 8083
           env:

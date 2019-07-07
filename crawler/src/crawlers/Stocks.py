@@ -7,7 +7,7 @@ import ftplib
 from database import Stocks
 
 
-mysqlCreds = 'mysql://phpmyadmin:pass@' + os.environ['MYSQL_HOSTNAME'] + ':3306/stocksvision'
+mysqlCreds = 'mysql://crawler:pass@' + os.environ['MYSQL_HOSTNAME'] + ':3306/stocksvision'
 engine = create_engine(mysqlCreds, convert_unicode=True)
 
 def getFileAndParseData(dbSession, ftp, filename):

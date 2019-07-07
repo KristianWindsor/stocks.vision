@@ -10,6 +10,7 @@ services:
       - 3306:3306
     volumes:
       - ./mysql/mysql-data:/var/lib/mysql
+    restart: always
 #
   webui:
     image: kristianwindsor/stocksvision-webui
@@ -19,7 +20,7 @@ services:
       - 80:80
     volumes:
       - ./webui/src:/var/www/html/
-#
+
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
@@ -38,14 +39,14 @@ services:
     volumes:
       - ./backend/src/:/app/
 #
-  crawlapi:
-    image: kristianwindsor/stocksvision-crawlapi
+  crawler:
+    image: kristianwindsor/stocksvision-crawler
     environment:
       - MYSQL_HOSTNAME=mysql
     ports:
       - 5001:5001
     volumes:
-      - ./crawlapi/src/:/app/
+      - ./crawler/src/:/app/
     env_file:
       - environment.env
 #
