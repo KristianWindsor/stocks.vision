@@ -1,8 +1,26 @@
 version: "3.7"
 services:
 #
+  webui:
+    build: webui
+    environment:
+      - API_URL=http://localhost:5000
+    ports:
+      - 80:80
+    volumes:
+      - ./webui/src:/var/www/html/
+#
+  backend:
+    build: backend
+    environment:
+      - MYSQL_HOSTNAME=mysql
+    ports:
+      - 5000:5000
+    volumes:
+      - ./backend/src/:/app/
+#
   mysql:
-    image: kristianwindsor/stocksvision-mysql
+    build: mysql/
     command: --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_ROOT_PASSWORD=pass
@@ -12,35 +30,8 @@ services:
       - ./mysql/mysql-data:/var/lib/mysql
     restart: always
 #
-  webui:
-    image: kristianwindsor/stocksvision-webui
-    environment:
-      - API_URL=http://localhost:5000
-    ports:
-      - 80:80
-    volumes:
-      - ./webui/src:/var/www/html/
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    environment:
-      - PMA_HOST=mysql
-      - PMA_USER=phpmyadmin
-      - PMA_PASSWORD=pass
-    ports:
-      - 8080:80
-#
-  backend:
-    image: kristianwindsor/stocksvision-backend
-    environment:
-      - MYSQL_HOSTNAME=mysql
-    ports:
-      - 5000:5000
-    volumes:
-      - ./backend/src/:/app/
-#
   crawler:
-    image: kristianwindsor/stocksvision-crawler
+    build: crawler
     environment:
       - MYSQL_HOSTNAME=mysql
     ports:
@@ -51,9 +42,18 @@ services:
       - environment.env
 #
   crawlscheduler:
-    image: kristianwindsor/stocksvision-crawlscheduler
+    build: crawlscheduler
     environment:
       - MYSQL_HOSTNAME=mysql
       - CRAWLAPI_HOSTNAME=crawlapi
     volumes:
       - ./crawlscheduler/src/:/app/
+#
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=phpmyadmin
+      - PMA_PASSWORD=pass
+    ports:
+      - 8080:80
