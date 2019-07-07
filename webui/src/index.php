@@ -55,49 +55,31 @@
 					<tbody>
 						<tr class="timepicker">
 							<td>
-								<a href="#">
-									1
-								</a>
+								<a onclick="setSimulationLength(1)" class="tp1">1</a>
 							</td>
 							<td>
-								<a href="#">
-									2
-								</a>
+								<a onclick="setSimulationLength(2)" class="tp2">2</a>
 							</td>
 							<td>
-								<a href="#">
-									3
-								</a>
+								<a onclick="setSimulationLength(3)" class="tp3">3</a>
 							</td>
 							<td>
-								<a href="#">
-									5
-								</a>
+								<a onclick="setSimulationLength(5)" class="tp5">5</a>
 							</td>
 							<td>
-								<a href="#">
-									8
-								</a>
+								<a onclick="setSimulationLength(8)" class="tp8">8</a>
 							</td>
 							<td>
-								<a href="#">
-									13
-								</a>
+								<a onclick="setSimulationLength(13)" class="tp13">13</a>
 							</td>
 							<td>
-								<a href="#">
-									21
-								</a>
+								<a onclick="setSimulationLength(21)" class="tp21">21</a>
 							</td>
 							<td>
-								<a href="#">
-									34
-								</a>
+								<a onclick="setSimulationLength(34)" class="tp34">34</a>
 							</td>
 							<td>
-								<a href="#">
-									55
-								</a>
+								<a onclick="setSimulationLength(55)" class="tp55">55</a>
 							</td>
 						</tr>
 					</tbody>

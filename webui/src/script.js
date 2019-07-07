@@ -45,6 +45,7 @@ function initializeHTML() {
 	}
 	$('#simulationDuration').val(settings.simulation.length);
 	$('#spendableCash').val(settings.spendableCash);
+	$('.tp' + settings.simulation.length.toString()).addClass('picked');
 	for (var indicatorName in indicators) {
 		if (indicators.hasOwnProperty(indicatorName)) {
 			if (indicators[indicatorName].isEnabled) {
@@ -228,7 +229,6 @@ function simulation() {
 			'indicators': indicators,
 			'completedSimulations': completedSimulations
 		}),
-		dataType: 'json',
 		contentType: "application/json",
 		success: function(returnData){
 			console.log(returnData);
@@ -238,7 +238,12 @@ function simulation() {
 	});
 }
 
-
+function setSimulationLength(length) {
+	settings.simulation.length = length;
+	$('.timepicker a').removeClass('picked');
+	$('.tp' + length.toString()).addClass('picked');
+	simulation();
+}
 
 
 function renderChart(portfolioData) {
@@ -275,10 +280,7 @@ function renderChart(portfolioData) {
 					distribution: 'linear',
 					time: {
 						unit: 'day',
-						unitStepSize: 1,
-						displayFormats: {
-							month: 'D'
-						}
+						unitStepSize: 1
 					}
 				}],
 				yAxes: [{
@@ -308,9 +310,9 @@ initializeHTML();
 
 
 $('#stock').on('input', function() {
-	if ($(this).val().length > 0) {
-		simulation();
-	}
+	// if ($(this).val().length > 0) {
+	// 	simulation();
+	// }
 });
 $('#holdDuration').on('input', function() {
 	if ($(this).val().length > 0) {

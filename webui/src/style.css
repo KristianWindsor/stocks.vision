@@ -19,12 +19,10 @@ input, button {
 	padding: 3% 6%;
 	vertical-align: top;
 }
-.fourth.input, .fourth.output {
-	min-height: 38.2vh;
-}
 .fourth.indicators, .fourth.simulations {
+	width: 100%;
+}.fourth.simulations {
 	min-height: 61.8vh;
-	height: 50%;
 }
 @media (max-width: 700px) {
 	.fourth {
@@ -91,7 +89,7 @@ td {
 	text-decoration: none;
 	border: 1px solid #ccc;
 }
-.simulations .timepicker a:hover {
+.simulations .timepicker a:hover, .timepicker .picked {
 	background-color: #333;
 	color: #fff;
 }

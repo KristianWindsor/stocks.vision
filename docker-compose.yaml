@@ -9,6 +9,7 @@ services:
       - 80:80
     volumes:
       - ./webui/src:/var/www/html/
+    restart: always
 #
   backend:
     build: backend
@@ -18,6 +19,7 @@ services:
       - 5000:5000
     volumes:
       - ./backend/src/:/app/
+    restart: always
 #
   mysql:
     build: mysql/
@@ -40,6 +42,7 @@ services:
       - ./crawler/src/:/app/
     env_file:
       - environment.env
+    restart: always
 #
   crawlscheduler:
     build: crawlscheduler
@@ -57,3 +60,4 @@ services:
       - PMA_PASSWORD=pass
     ports:
       - 8080:80
+    restart: always
