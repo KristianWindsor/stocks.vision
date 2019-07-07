@@ -102,14 +102,21 @@
 						</tr>
 					</tbody>
 				</table>
-				<div>
+				<div class="chart-wrap">
+					<canvas id="myChart" width="400" height="400"></canvas>
 				</div>
-					<img src="https://i.pinimg.com/236x/e0/50/7f/e0507f9c78708dcce6948ecabb80cbc4--free-stock-trading-android-apps.jpg" id="placeholder-img" style="display: none;" />
+				<div class="transactions">
+					<table>
+						<tbody id="transactions">
+						</tbody>
+					</table>
 				</div>
 			</div>
 		</div>
 	</body>
 	<script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="moment.min.js"></script>
+	<script type="text/javascript" src="Chart.min.js"></script>
 	<script>
 		var API_URL = '<?php echo getenv('API_URL'); ?>';
 	</script>

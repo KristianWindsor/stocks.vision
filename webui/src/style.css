@@ -71,6 +71,7 @@ input, button {
 
 table {
 	width: 100%;
+	margin-bottom: 40px;
 	border-collapse: collapse;
 	border-spacing: 0;
 }
@@ -78,6 +79,9 @@ td {
 	text-align: center;
 }
 
+.timepicker {
+	padding-bottom: 30px;
+}
 .simulations .timepicker td {
 	padding: 0;
 }
@@ -91,6 +95,12 @@ td {
 	background-color: #333;
 	color: #fff;
 }
+.chart-wrap {
+	height: 400px;
+	width: 100%;
+}
+.transactions {
 
+}
 
 

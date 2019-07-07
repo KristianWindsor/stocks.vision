@@ -69,7 +69,6 @@ function startAnalyzing() {
 	$('.fourth.indicators input[type="range"]').prop('disabled', true);
 	simulation();
 	$('#simulationButton').html('Stop Simulations');
-	$('#placeholder-img').show();
 }
 function stopAnalyzing() {
 	$('.fourth.indicators input[type="range"]').prop('disabled', false);
@@ -203,6 +202,8 @@ function GETindicator(indicator) {
 			});
 			// update math
 			doMath();
+			// update simulation
+			simulation();
 		}
 	});
 }
@@ -231,10 +232,75 @@ function simulation() {
 		contentType: "application/json",
 		success: function(returnData){
 			console.log(returnData);
+			renderChart(returnData['chartData']);
+			renderTransactions(returnData['transactions']);
 		}
 	});
 }
 
+
+
+
+function renderChart(portfolioData) {
+	var chartData = [];
+	for (var key in portfolioData) {
+		if (portfolioData.hasOwnProperty(key)) {
+			chartData.push({
+				x: new Date(key),
+				y: portfolioData[key]
+			});
+		}
+	}
+	console.log(chartData);
+	var canvas = document.getElementById("myChart");
+	var chart = new Chart(canvas.getContext("2d"), {
+		type: 'line',
+		data: {
+			datasets: [{
+				label: 'CRAP Score (less is better)',
+				data: chartData,
+				backgroundColor: 'rgb(33, 206, 153, 0.2)',
+				borderColor: 'rgb(33, 206, 153, 1)'
+			}]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			legend: {
+				display: false
+			},
+			scales: {
+				xAxes: [{
+					type: 'time',
+					distribution: 'linear',
+					time: {
+						unit: 'day',
+						unitStepSize: 1,
+						displayFormats: {
+							month: 'D'
+						}
+					}
+				}],
+				yAxes: [{
+					ticks: {
+						callback: function (value) {
+							return '$' + value;
+						}
+					}
+				}]
+			}
+		}
+	});
+}
+
+function renderTransactions(transactions) {
+	console.log(transactions);
+	$('#transactions').html('');
+	transactions.forEach(function (item, index) {
+		var html = '<tr><td>'+item['date']+'</td><td>'+item['move']+'</td><td>'+item['stock']+'</td><td>'+item['quantity']+'</td><td>'+item['price']+'</td></tr>';
+		$('#transactions').append(html);
+	});
+}
 
 
 initializeHTML();
