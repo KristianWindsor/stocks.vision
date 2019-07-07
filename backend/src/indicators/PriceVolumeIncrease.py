@@ -16,7 +16,6 @@ cursor = db.cursor(pymysql.cursors.DictCursor)
 
 
 def main(stock, date):
-	print(stock)
 	startDate = datetime.strptime(date, "%Y-%m-%d")
 	startDate = startDate - dateutil.relativedelta.relativedelta(days=1)
 	startDate = startDate.strftime('%Y-%m-%d')
@@ -31,6 +30,8 @@ def main(stock, date):
 		if lastPriceDifference and lastVolume:
 			if volume > lastVolume and priceDifference > 0:
 				result = 100
+			elif volume > lastVolume and priceDifference < 0:
+				result = -100
 		lastPriceDifference = priceDifference
 		lastVolume = volume
 	return str(result)

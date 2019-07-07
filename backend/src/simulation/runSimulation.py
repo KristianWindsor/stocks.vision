@@ -60,11 +60,14 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			for indicatorName in indicatorSettings:
 				indicatorValue = float(getattr(indicators, indicatorName).main(stock, date.strftime('%Y-%m-%d')))
 				averageIndicatorValue += indicatorValue
+				# print(indicatorName+':'+str(indicatorValue))
 			averageIndicatorValue /= 2
-			print(averageIndicatorValue)
 			# do math
-			fundsAllocated = portfolio['cash'] * averageIndicatorValue * 0.01
-			if fundsAllocated > stockPrice:
+			if averageIndicatorValue >= 0:
+				fundsAllocated = portfolio['cash'] * averageIndicatorValue * 0.01
+			else:
+				fundsAllocated = (portfolio['cash'] + (stockPrice * portfolio[stock])) * averageIndicatorValue * 0.01
+			if abs(fundsAllocated) > stockPrice:
 				if stock not in portfolio:
 					portfolio[stock] = 0
 				# buy / sell
@@ -75,8 +78,8 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 					portfolio['cash'] -= stockPrice * quantity
 				elif quantity < 0:
 					action = 'SELL'
-					portfolio[stock] -= quantity
-					portfolio['cash'] += stockPrice * quantity
+					portfolio[stock] += quantity
+					portfolio['cash'] -= stockPrice * quantity
 				results['transactions'].append({
 					'date': date.strftime('%Y-%m-%d'),
 					'move': action,

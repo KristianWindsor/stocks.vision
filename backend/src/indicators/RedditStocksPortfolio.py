@@ -23,8 +23,6 @@ def main(stock, date):
 	startDate = datetime.strptime(date, "%Y-%m-%d")
 	startDate = startDate - dateutil.relativedelta.relativedelta(months=1)
 	startDate = startDate.strftime('%Y-%m-%d')
-	print(startDate)
-	print(date)
 	cursor.execute("SELECT id, karma FROM reddit_stocks_portfolio_comment WHERE date >= '" + startDate + "' AND date <= '" + date + "'")
 	comments = cursor.fetchall()
 	averagePortfolio = {}
