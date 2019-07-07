@@ -17,24 +17,24 @@ cursor = db.cursor(pymysql.cursors.DictCursor)
 stockPrices = {}
 
 
-def portfolioNetWorth(portfolio):
+def portfolioNetWorth(portfolio, date):
 	netWorth = portfolio['cash']
 	for ticker in portfolio:
 		if ticker != 'cash':
 			quantity = float(portfolio[ticker])
-			price = float(stockPrices[ticker][max(stockPrices['AAPL'])])
+			price = float(stockPrices[ticker][date.strftime('%Y-%m-%d')])
 			netWorth += quantity * price
 	return netWorth
 
 
-def main(stock, indicators, startDate, endDate, cash):
+def main(stock, indicatorSettings, startDate, endDate, cash):
 	results = {
-		'indicators': indicators,
+		'indicators': indicatorSettings,
 		'chartData': {},
 		'transactions': []
 	}
 	print(stock)
-	print(indicators)
+	print(indicatorSettings)
 	print(startDate)
 	print(endDate)
 	print(cash)
@@ -54,27 +54,38 @@ def main(stock, indicators, startDate, endDate, cash):
 		date = (startDate + timedelta(days=i))
 		if date.weekday() < 5 and date.strftime('%Y-%m-%d') in stockPrices[stock]:
 			print(date.strftime('%Y-%m-%d'))
-			portfolio['cash'] += 5
-			for indicator in indicators:
-				print('indicator:' + indicator)
-				stockPrice = float(stockPrices[stock][date.strftime('%Y-%m-%d')])
-				indicatorValue = 7
-				if stockPrice < (portfolio['cash'] * indicatorValue * 0.01):
-					if stock not in portfolio:
-						portfolio[stock] = 0
-					quantity = 2
-					transaction = {
-						'date': date.strftime('%Y-%m-%d'),
-						'move': 'BUY',
-						'stock': stock,
-						'quantity': quantity,
-						'price': stockPrice
-					}
+			# get indicator values
+			averageIndicatorValue = 0
+			stockPrice = float(stockPrices[stock][date.strftime('%Y-%m-%d')])
+			for indicatorName in indicatorSettings:
+				indicatorValue = float(getattr(indicators, indicatorName).main(stock, date.strftime('%Y-%m-%d')))
+				averageIndicatorValue += indicatorValue
+			averageIndicatorValue /= 2
+			print(averageIndicatorValue)
+			# do math
+			fundsAllocated = portfolio['cash'] * averageIndicatorValue * 0.01
+			if fundsAllocated > stockPrice:
+				if stock not in portfolio:
+					portfolio[stock] = 0
+				# buy / sell
+				quantity = int(fundsAllocated / stockPrice)
+				if quantity > 0:
+					action = 'BUY'
 					portfolio[stock] += quantity
 					portfolio['cash'] -= stockPrice * quantity
-					results['transactions'].append(transaction)
+				elif quantity < 0:
+					action = 'SELL'
+					portfolio[stock] -= quantity
+					portfolio['cash'] += stockPrice * quantity
+				results['transactions'].append({
+					'date': date.strftime('%Y-%m-%d'),
+					'move': action,
+					'stock': stock,
+					'quantity': quantity,
+					'price': stockPrice
+				})
 			print(portfolio)
-			results['chartData'][date.strftime('%Y-%m-%d')] = portfolioNetWorth(portfolio)
+			results['chartData'][date.strftime('%Y-%m-%d')] = portfolioNetWorth(portfolio, date)
 
 	return results
 
