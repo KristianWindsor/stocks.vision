@@ -217,6 +217,7 @@ function simulation() {
 			completedSimulations = simulations[simID][length];
 		}
 
+	console.log(indicators);
 	$.ajax({
 		type: 'POST',
 		url: 'https://api.stocks.vision/simulation',
