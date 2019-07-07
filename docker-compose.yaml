@@ -14,11 +14,13 @@ services:
     stdin_open: true
   webui:
     image: kristianwindsor/stocksvision-webui
+    environment:
+      - API_URL=http://localhost:8082
     ports:
       - 8080:80
     restart: always
     volumes:
-      - ./webui/src:/usr/local/apache2/htdocs/
+      - ./webui/src:/var/www/html/
     tty: true
     stdin_open: true
   phpmyadmin:

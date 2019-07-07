@@ -1,3 +1,5 @@
-FROM httpd:2.4-alpine
+FROM php:7.3-apache
 
-COPY ./src/ /usr/local/apache2/htdocs/
+COPY src/ /var/www/html/
+
+WORKDIR /var/www/html/

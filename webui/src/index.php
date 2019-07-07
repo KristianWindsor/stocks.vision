@@ -110,5 +110,8 @@
 		</div>
 	</body>
 	<script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+	<script>
+		var API_URL = '<?php echo getenv('API_URL'); ?>';
+	</script>
 	<script type="text/javascript" src="script.js"></script>
 </html>

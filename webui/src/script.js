@@ -58,7 +58,7 @@ function initializeHTML() {
 	GETindicator('*');
 	$.ajax({
 		type: 'GET',
-		url: 'https://api.stocks.vision/tickerlist',
+		url: API_URL + '/tickerlist',
 		success: function(returnData){
 			listOfAllStocks = returnData;
 		}
@@ -162,7 +162,7 @@ function GETindicator(indicator) {
 	var stock = $('#stock').val().toUpperCase();
 	$.ajax({
 		type: 'POST',
-		url: 'https://api.stocks.vision/indicator',
+		url: API_URL + '/indicator',
 		data: JSON.stringify({ 
 			'indicator': indicator, 
 			'stock': stock,
@@ -220,7 +220,7 @@ function simulation() {
 	console.log(indicators);
 	$.ajax({
 		type: 'POST',
-		url: 'https://api.stocks.vision/simulation',
+		url: API_URL + '/simulation',
 		data: JSON.stringify({ 
 			'stock': stock,
 			'length': length, 

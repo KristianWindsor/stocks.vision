@@ -20,6 +20,9 @@ spec:
 # webui              
         - name: webui
           image: kristianwindsor/stocksvision-webui
+          env:
+            - name: API_URL
+              value: https://api.stocks.vision
           ports:
             - containerPort: 80
 # backend              
