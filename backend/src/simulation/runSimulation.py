@@ -50,6 +50,7 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 
 	# run simulation
 	portfolio = { 'cash': cash }
+	startStockPrice = None
 	for i in range(delta.days + 1):
 		date = (startDate + timedelta(days=i))
 		if date.weekday() < 5 and date.strftime('%Y-%m-%d') in stockPrices[stock]:
@@ -57,19 +58,21 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			# get indicator values
 			averageIndicatorValue = 0
 			stockPrice = float(stockPrices[stock][date.strftime('%Y-%m-%d')])
+			if not startStockPrice:
+				startStockPrice = stockPrice
 			for indicatorName in indicatorSettings:
 				indicatorValue = float(getattr(indicators, indicatorName).main(stock, date.strftime('%Y-%m-%d')))
 				averageIndicatorValue += indicatorValue
 				# print(indicatorName+':'+str(indicatorValue))
 			averageIndicatorValue /= 2
+			if stock not in portfolio:
+				portfolio[stock] = 0
 			# do math
 			if averageIndicatorValue >= 0:
 				fundsAllocated = portfolio['cash'] * averageIndicatorValue * 0.01
 			else:
 				fundsAllocated = (portfolio['cash'] + (stockPrice * portfolio[stock])) * averageIndicatorValue * 0.01
 			if abs(fundsAllocated) > stockPrice:
-				if stock not in portfolio:
-					portfolio[stock] = 0
 				# buy / sell
 				quantity = int(fundsAllocated / stockPrice)
 				if quantity > 0:
@@ -88,7 +91,12 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 					'price': stockPrice
 				})
 			print(portfolio)
-			results['chartData'][date.strftime('%Y-%m-%d')] = portfolioNetWorth(portfolio, date)
+			results['chartData'][date.strftime('%Y-%m-%d')] = {
+				'portfolioNetWorth': portfolioNetWorth(portfolio, date),
+				'portfolioNetWorthPercent': portfolioNetWorth(portfolio, date) / cash * 100 - 100,
+				'stockPrice': stockPrice,
+				'stockPricePercent': stockPrice / startStockPrice * 100 - 100
+			}
 
 	return results
 
