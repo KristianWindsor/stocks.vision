@@ -17,7 +17,7 @@ spec:
         app: stocksvision
     spec:
       containers:
-# webui              
+#              
         - name: webui
           image: kristianwindsor/stocksvision-webui
           env:
@@ -25,7 +25,7 @@ spec:
               value: https://api.stocks.vision
           ports:
             - containerPort: 80
-# backend              
+#              
         - name: backend
           image: kristianwindsor/stocksvision-backend
           env:
@@ -33,7 +33,7 @@ spec:
               value: localhost
           ports:
             - containerPort: 5000
-# mysql              
+#              
         - name: mysql
           image: kristianwindsor/stocksvision-mysql
           ports:
@@ -44,7 +44,7 @@ spec:
           volumeMounts:
            - name: stocksvision-mysql
              mountPath: /var/lib/mysql
-# crawl api              
+#            
         - name: crawlapi
           image: kristianwindsor/stocksvision-crawlapi
           ports:
@@ -69,7 +69,7 @@ spec:
                 secretKeyRef:
                   name: stocksvision-env
                   key: reddit-secret
-# crawl scheduler      
+#    
         - name: crawlscheduler
           image: kristianwindsor/stocksvision-crawlscheduler
           env:
@@ -77,7 +77,7 @@ spec:
               value: localhost
             - name: MYSQL_HOSTNAME
               value: localhost
-# phpmyadmin              
+#           
         - name: phpmyadmin
           image: kristianwindsor/stocksvision-phpmyadmin
           ports:

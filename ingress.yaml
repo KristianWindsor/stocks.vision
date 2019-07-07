@@ -32,7 +32,7 @@ spec:
       - path: /
         backend:
           serviceName: stocksvision
-          servicePort: 8083
+          servicePort: 5001
   - host: phpmyadmin.stocks.vision
     http:
       paths:

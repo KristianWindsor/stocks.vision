@@ -13,6 +13,6 @@ spec:
     - name: backend
       port: 5000
     - name: crawlapi
-      port: 8083
+      port: 5001
     - name: phpmyadmin
       port: 8080

@@ -7,7 +7,7 @@ do
 	then
 		mysqlIsRunning="mysqlIsRunning"
 	fi
-	sleep 5
+	sleep 2
 done
 
 set -x

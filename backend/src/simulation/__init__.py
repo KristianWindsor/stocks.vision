@@ -1,2 +1,2 @@
-__all__ = ['runSimulation']
+__all__ = ['RunSimulation']
 from . import *

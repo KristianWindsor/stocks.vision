@@ -89,7 +89,7 @@ def runSimulation():
 	endDate = datetime.now()
 	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
 	# get results
-	results = simulation.runSimulation.main(stock, indicators, startDate, endDate, cash)
+	results = simulation.RunSimulation.main(stock, indicators, startDate, endDate, cash)
 	# return results
 	return results
 
