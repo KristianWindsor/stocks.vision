@@ -9,6 +9,7 @@ import json
 import datetime
 from datetime import datetime, timedelta
 import dateutil.relativedelta
+import requests
 
 # write each module name in __init__.py so they can import successfully
 from os.path import dirname, basename, isfile, join
@@ -34,7 +35,15 @@ db = pymysql.connect(
 	db='stocksvision',
 	autocommit=True
 )
+db2 = pymysql.connect(
+	host=os.environ['MYSQL_HOSTNAME'],
+	user='backend',
+	passwd='pass',
+	db='stocksvision',
+	autocommit=True
+)
 cursor = db.cursor(pymysql.cursors.DictCursor)
+cursor2 = db2.cursor(pymysql.cursors.DictCursor)
 
 #
 # index
@@ -88,6 +97,19 @@ def runSimulation():
 	indicators = data['indicators']
 	endDate = datetime.now()
 	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
+	# crawler
+	rowCount = cursor2.execute("SELECT id FROM stock_data WHERE ticker = '"+stock+"' AND date <= '" + startDate.strftime('%Y-%m-%d') + "'")
+	if rowCount == 0:
+		url = os.environ['CRAWLER_URL'] + '/runScript'
+		data = json.dumps({
+			"crawlerName": "StockData",
+			"startDate": "2019-01-15",
+			"stockTicker": stock,
+			"token": "hello"
+		})
+		headers = { "Content-Type":"application/json" }
+		res = requests.post(url, data=data, headers=headers)
+		print(res.text)
 	# get results
 	results = simulation.RunSimulation.main(stock, indicators, startDate, endDate, cash)
 	# return results

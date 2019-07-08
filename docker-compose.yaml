@@ -15,6 +15,7 @@ services:
     build: backend
     environment:
       - MYSQL_HOSTNAME=mysql
+      - CRAWLER_URL=http://crawler:5001
     ports:
       - 5000:5000
     volumes:
