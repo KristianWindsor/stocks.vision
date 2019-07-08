@@ -55,31 +55,22 @@
 					<tbody>
 						<tr class="timepicker">
 							<td>
-								<a onclick="setSimulationLength(1)" class="tp1">1</a>
+								<a onclick="setSimulationLength(1)" class="tp1">1 Week</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(2)" class="tp2">2</a>
+								<a onclick="setSimulationLength(3)" class="tp3">3 Weeks</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(3)" class="tp3">3</a>
+								<a onclick="setSimulationLength(4)" class="tp4">1 Month</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(5)" class="tp5">5</a>
+								<a onclick="setSimulationLength(12)" class="tp12">3 Months</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(8)" class="tp8">8</a>
+								<a onclick="setSimulationLength(52)" class="tp52">1 Year</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(13)" class="tp13">13</a>
-							</td>
-							<td>
-								<a onclick="setSimulationLength(21)" class="tp21">21</a>
-							</td>
-							<td>
-								<a onclick="setSimulationLength(34)" class="tp34">34</a>
-							</td>
-							<td>
-								<a onclick="setSimulationLength(55)" class="tp55">55</a>
+								<a onclick="setSimulationLength(156)" class="tp156">3 Years</a>
 							</td>
 						</tr>
 					</tbody>

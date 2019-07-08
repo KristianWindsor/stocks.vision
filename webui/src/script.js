@@ -247,46 +247,63 @@ function setSimulationLength(length) {
 
 
 function renderChart(portfolioData) {
-	var chartData = [];
+	var chartData = [],
+		stockChartData = [];
 	for (var key in portfolioData) {
 		if (portfolioData.hasOwnProperty(key)) {
 			chartData.push({
 				x: new Date(key),
-				y: portfolioData[key]
+				y: portfolioData[key]['portfolioNetWorthPercent']
+			});
+			stockChartData.push({
+				x: new Date(key),
+				y: portfolioData[key]['stockPricePercent']
 			});
 		}
 	}
-	console.log(chartData);
+	var timeUnit;
+	if (settings.simulation.length < 6) {
+		timeUnit = 'day';
+	} else if (settings.simulation.length < 52) {
+		timeUnit = 'week';
+	} else if (settings.simulation.length > 52) {
+		timeUnit = 'month';
+	}
 	var canvas = document.getElementById("myChart");
 	var chart = new Chart(canvas.getContext("2d"), {
 		type: 'line',
 		data: {
 			datasets: [{
-				label: 'CRAP Score (less is better)',
+				label: 'Portfolio Net Worth',
 				data: chartData,
 				backgroundColor: 'rgb(33, 206, 153, 0.2)',
 				borderColor: 'rgb(33, 206, 153, 1)'
+			}, {
+				label: settings.stock.ticker + ' Price',
+				data: stockChartData,
+				backgroundColor: 'rgb(206, 153, 33, 0)',
+				borderColor: 'rgb(206, 153, 33, 1)'
 			}]
 		},
 		options: {
 			responsive: true,
 			maintainAspectRatio: false,
 			legend: {
-				display: false
+				display: true
 			},
 			scales: {
 				xAxes: [{
 					type: 'time',
 					distribution: 'linear',
 					time: {
-						unit: 'day',
+						unit: timeUnit,
 						unitStepSize: 1
 					}
 				}],
 				yAxes: [{
 					ticks: {
 						callback: function (value) {
-							return '$' + value;
+							return value + '%';
 						}
 					}
 				}]
