@@ -49,7 +49,7 @@ services:
     build: crawlscheduler
     environment:
       - MYSQL_HOSTNAME=mysql
-      - CRAWLAPI_HOSTNAME=crawlapi
+      - CRAWLER_URL=http://crawler:5002
     volumes:
       - ./crawlscheduler/src/:/app/
 #

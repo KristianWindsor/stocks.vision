@@ -22,7 +22,7 @@ spec:
           image: kristianwindsor/stocksvision-webui
           env:
             - name: API_URL
-              value: https://api.stocks.vision
+              value: https://backend.stocks.vision
           ports:
             - containerPort: 80
 #              
@@ -31,6 +31,8 @@ spec:
           env:
             - name: MYSQL_HOSTNAME
               value: localhost
+            - name: CRAWLER_URL
+              value: http://127.0.0.1:5001
           ports:
             - containerPort: 5000
 #              
@@ -48,7 +50,7 @@ spec:
         - name: crawler
           image: kristianwindsor/stocksvision-crawler
           ports:
-            - containerPort: 8083
+            - containerPort: 5001
           env:
             - name: MYSQL_HOSTNAME
               value: localhost
@@ -73,8 +75,8 @@ spec:
         - name: crawlscheduler
           image: kristianwindsor/stocksvision-crawlscheduler
           env:
-            - name: CRAWLAPI_HOSTNAME
-              value: localhost
+            - name: CRAWLER_URL
+              value: http://127.0.0.1:5001
             - name: MYSQL_HOSTNAME
               value: localhost
 #           

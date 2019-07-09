@@ -10,9 +10,7 @@ spec:
   commonName: stocks.vision
   dnsNames:
   - stocks.vision
-  - api.stocks.vision
-  - crawlapi.stocks.vision
-  - phpmyadmin.stocks.vision
+  - '*.stocks.vision'
   acme:
     config:
     - dns01:
@@ -20,6 +18,4 @@ spec:
         ingressClass: nginx
       domains:
       - stocks.vision
-      - api.stocks.vision
-      - crawlapi.stocks.vision
-      - phpmyadmin.stocks.vision
+      - '*.stocks.vision'

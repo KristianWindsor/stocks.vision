@@ -25,11 +25,11 @@ for i in range(100):
 		print('Trying to connect to MySQL...')
 
 #
-# crawlapi function
+# crawler function
 #
-def crawlapi(data):
+def crawler(data):
 	headers = { "Content-Type":"application/json" }
-	url = 'http://' + os.environ['CRAWLAPI_HOSTNAME'] + ':8083/runScript'
+	url = os.environ['CRAWLER_URL'] + '/runScript'
 	res = requests.post(url, data=json.dumps(data), headers=headers)
 	print(res.text)
 
@@ -42,7 +42,7 @@ def getAllStockData():
 		doesDataAlreadyExist = cursor.execute('SELECT * FROM stock_data WHERE ticker = "' + stockTicker + '"')
 		if doesDataAlreadyExist == 0:
 			print('StockData: ' + stockTicker)
-			crawlapi({
+			crawler({
 				"crawlerName": "StockData",
 				"startDate": "2019-01-15",
 				"stockTicker": stockTicker,

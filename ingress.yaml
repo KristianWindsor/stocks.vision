@@ -19,14 +19,14 @@ spec:
         backend:
           serviceName: stocksvision
           servicePort: 80
-  - host: api.stocks.vision
+  - host: backend.stocks.vision
     http:
       paths:
       - path: /
         backend:
           serviceName: stocksvision
           servicePort: 5000
-  - host: crawlapi.stocks.vision
+  - host: crawler.stocks.vision
     http:
       paths:
       - path: /
@@ -44,6 +44,4 @@ spec:
   - secretName: stocksvision-cert
     hosts:
     - stocks.vision
-    - api.stocks.vision
-    - crawlapi.stocks.vision
-    - phpmyadmin.stocks.vision
+    - '*.stocks.vision'
