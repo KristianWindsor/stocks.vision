@@ -8,17 +8,15 @@ import time
 import json
 
 
-db = pymysql.connect(
-	host=os.environ['MYSQL_HOSTNAME'],
-	user='backend',
-	passwd='pass',
-	db='stocksvision',
-	autocommit=True
-)
-cursor = db.cursor(pymysql.cursors.DictCursor)
-
-
 def main(stock, date):
+	db = pymysql.connect(
+		host=os.environ['MYSQL_HOSTNAME'],
+		user='backend',
+		passwd='pass',
+		db='stocksvision',
+		autocommit=True
+	)
+	cursor = db.cursor(pymysql.cursors.DictCursor)
 	# get average portfolio
 	startDate = datetime.strptime(date, "%Y-%m-%d")
 	startDate = startDate - dateutil.relativedelta.relativedelta(months=1)

@@ -5,15 +5,6 @@ from datetime import date, timedelta
 import indicators
 
 
-db = pymysql.connect(
-	host=os.environ['MYSQL_HOSTNAME'],
-	user='backend',
-	passwd='pass',
-	db='stocksvision',
-	autocommit=True
-)
-cursor = db.cursor(pymysql.cursors.DictCursor)
-
 stockPrices = {}
 
 
@@ -28,6 +19,15 @@ def portfolioNetWorth(portfolio, date):
 
 
 def main(stock, indicatorSettings, startDate, endDate, cash):
+	db = pymysql.connect(
+		host=os.environ['MYSQL_HOSTNAME'],
+		user='backend',
+		passwd='pass',
+		db='stocksvision',
+		autocommit=True
+	)
+	cursor = db.cursor(pymysql.cursors.DictCursor)
+	
 	results = {
 		'indicators': indicatorSettings,
 		'chartData': {},

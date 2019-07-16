@@ -5,17 +5,15 @@ from datetime import datetime, timedelta
 import dateutil.relativedelta
 
 
-db = pymysql.connect(
-	host=os.environ['MYSQL_HOSTNAME'],
-	user='backend',
-	passwd='pass',
-	db='stocksvision',
-	autocommit=True
-)
-cursor = db.cursor(pymysql.cursors.DictCursor)
-
-
 def main(stock, date):
+	db = pymysql.connect(
+		host=os.environ['MYSQL_HOSTNAME'],
+		user='backend',
+		passwd='pass',
+		db='stocksvision',
+		autocommit=True
+	)
+	cursor = db.cursor(pymysql.cursors.DictCursor)
 	startDate = datetime.strptime(date, "%Y-%m-%d")
 	startDate = startDate - dateutil.relativedelta.relativedelta(days=1)
 	startDate = startDate.strftime('%Y-%m-%d')

@@ -28,22 +28,7 @@ CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 
-db = pymysql.connect(
-	host=os.environ['MYSQL_HOSTNAME'],
-	user='backend',
-	passwd='pass',
-	db='stocksvision',
-	autocommit=True
-)
-db2 = pymysql.connect(
-	host=os.environ['MYSQL_HOSTNAME'],
-	user='backend',
-	passwd='pass',
-	db='stocksvision',
-	autocommit=True
-)
-cursor = db.cursor(pymysql.cursors.DictCursor)
-cursor2 = db2.cursor(pymysql.cursors.DictCursor)
+
 
 #
 # index
@@ -90,6 +75,14 @@ def indicator():
 @app.route('/simulation', methods=["POST"])
 @cross_origin()
 def runSimulation():
+	db = pymysql.connect(
+		host=os.environ['MYSQL_HOSTNAME'],
+		user='backend',
+		passwd='pass',
+		db='stocksvision',
+		autocommit=True
+	)
+	cursor = db.cursor(pymysql.cursors.DictCursor)
 	data = request.get_json()
 	stock = data['stock']
 	cash = 10000.00
@@ -98,7 +91,7 @@ def runSimulation():
 	endDate = datetime.now()
 	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
 	# crawler
-	rowCount = cursor2.execute("SELECT id FROM stock_data WHERE ticker = '"+stock+"' AND date <= '" + startDate.strftime('%Y-%m-%d') + "'")
+	rowCount = cursor.execute("SELECT id FROM stock_data WHERE ticker = '"+stock+"' AND date <= '" + startDate.strftime('%Y-%m-%d') + "'")
 	if rowCount == 0:
 		url = os.environ['CRAWLER_URL'] + '/runScript'
 		data = json.dumps({
@@ -121,6 +114,14 @@ def runSimulation():
 @app.route('/tickerlist', methods=["GET"])
 @cross_origin()
 def tickerlist():
+	db = pymysql.connect(
+		host=os.environ['MYSQL_HOSTNAME'],
+		user='backend',
+		passwd='pass',
+		db='stocksvision',
+		autocommit=True
+	)
+	cursor = db.cursor(pymysql.cursors.DictCursor)
 	listOfAllStocks = []
 	cursor.execute("SELECT ticker FROM stocks")
 	for row in cursor.fetchall():
