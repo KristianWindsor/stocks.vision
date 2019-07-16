@@ -57,16 +57,22 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			print(date.strftime('%Y-%m-%d'))
 			# get indicator values
 			averageIndicatorValue = 0
+			numerator = 0
+			denominator = 0
+			#
+			if stock not in portfolio:
+				portfolio[stock] = 0
+			#
 			stockPrice = float(stockPrices[stock][date.strftime('%Y-%m-%d')])
 			if not startStockPrice:
 				startStockPrice = stockPrice
 			for indicatorName in indicatorSettings:
 				indicatorValue = float(getattr(indicators, indicatorName).main(stock, date.strftime('%Y-%m-%d')))
-				averageIndicatorValue += indicatorValue
-				# print(indicatorName+':'+str(indicatorValue))
-			averageIndicatorValue /= 2
-			if stock not in portfolio:
-				portfolio[stock] = 0
+				weight = indicatorSettings[indicatorName]
+				numerator += indicatorValue * weight
+				denominator += weight
+			if denominator != 0:
+				averageIndicatorValue = numerator / denominator
 			# do math
 			if averageIndicatorValue >= 0:
 				fundsAllocated = portfolio['cash'] * averageIndicatorValue * 0.01

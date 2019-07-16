@@ -120,6 +120,7 @@ function doMath() {
 }
 
 function indicatorWeightChanged(indicatorName) {
+	console.log(indicatorName);
 	// get values
 	var indicatorValue = parseFloat($('.' + indicatorName + ' .indicatorValue').html());
 	var trackbarValue = parseFloat($('#' + indicatorName).val());
@@ -127,6 +128,7 @@ function indicatorWeightChanged(indicatorName) {
 	if (trackbarValue >= 0 && trackbarValue <= 10) {
 		indicators[indicatorName].weight = trackbarValue;
 		$('.' + indicatorName + ' .trackbarValue').html(trackbarValue);
+		simulation();
 	}
 	doMath();
 }
@@ -192,7 +194,7 @@ function GETindicator(indicator) {
 			 			<div class="`+indicatorName+`">
 							<input type="checkbox" onchange="indicatorEnabledChanged('`+indicatorName+`')" `+checkboxMaybeChecked+` /><br>
 							`+indicatorName+`
-							<input id="`+indicatorName+`" type="range" min="0" max="10" value="`+indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" onchange="indicatorWeightChanged('`+indicatorName+`');" />
+							<input id="`+indicatorName+`" type="range" min="0" max="10" value="`+indicators[indicatorName].weight+`" onchange="indicatorWeightChanged('`+indicatorName+`');" />
 							<span class="indicatorValue">`+(Math.round(returnData[indicatorName] * 10) / 10)+`%</span> * <span class="trackbarValue">`+indicators[indicatorName].weight+`</span>
 						</div>
 			 		`;
@@ -213,20 +215,27 @@ function GETindicator(indicator) {
 function simulation() {
 	var stock = $('#stock').val().toUpperCase(),
 		length = settings.simulation.length,
+		indicatorSettings = {},
 		simID = stock,
 		completedSimulations = {};
 		if (simulations[simID] && simulations[simID][length]) {
 			completedSimulations = simulations[simID][length];
 		}
 
-	console.log(indicators);
+	for (var key in indicators) {
+		if (indicators.hasOwnProperty(key)) {
+			if (indicators[key]['isEnabled']) {
+				indicatorSettings[key] = indicators[key]['weight'];
+			}
+		}
+	}
 	$.ajax({
 		type: 'POST',
 		url: API_URL + '/simulation',
 		data: JSON.stringify({ 
 			'stock': stock,
 			'length': length, 
-			'indicators': indicators,
+			'indicators': indicatorSettings,
 			'completedSimulations': completedSimulations
 		}),
 		contentType: "application/json",
