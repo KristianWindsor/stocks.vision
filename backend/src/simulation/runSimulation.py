@@ -59,7 +59,7 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			averageIndicatorValue = 0
 			numerator = 0
 			denominator = 0
-			#
+			indicatorChartData = {}
 			if stock not in portfolio:
 				portfolio[stock] = 0
 			#
@@ -68,6 +68,7 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 				startStockPrice = stockPrice
 			for indicatorName in indicatorSettings:
 				indicatorValue = float(getattr(indicators, indicatorName).main(stock, date.strftime('%Y-%m-%d')))
+				indicatorChartData[indicatorName] = indicatorValue
 				weight = indicatorSettings[indicatorName]
 				numerator += indicatorValue * weight
 				denominator += weight
@@ -101,8 +102,11 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 				'portfolioNetWorth': portfolioNetWorth(portfolio, date),
 				'portfolioNetWorthPercent': portfolioNetWorth(portfolio, date) / cash * 100 - 100,
 				'stockPrice': stockPrice,
-				'stockPricePercent': stockPrice / startStockPrice * 100 - 100
+				'stockPricePercent': stockPrice / startStockPrice * 100 - 100,
+				'stockQuantity': portfolio[stock],
+				'indicators': indicatorChartData
 			}
+
 
 	return results
 

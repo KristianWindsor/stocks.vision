@@ -241,8 +241,8 @@ function simulation() {
 		contentType: "application/json",
 		success: function(returnData){
 			console.log(returnData);
-			renderChart(returnData['chartData']);
-			renderTransactions(returnData['transactions']);
+			renderChart(returnData);
+			//renderTransactions(returnData['transactions']);
 		}
 	});
 }
@@ -254,19 +254,52 @@ function setSimulationLength(length) {
 	simulation();
 }
 
+function randomNum(min,max) {
+    return Math.floor(Math.random()*(max-min+1)+min).toString();
+}
 
-function renderChart(portfolioData) {
+function renderChart(allData) {
 	var chartData = [],
-		stockChartData = [];
-	for (var key in portfolioData) {
-		if (portfolioData.hasOwnProperty(key)) {
+		stockChartData = [],
+		stockQuantityData = [],
+		indicatorDataSets = [],
+		indicatorData = {};
+	for (var key in allData['chartData']) {
+		if (allData['chartData'].hasOwnProperty(key)) {
 			chartData.push({
 				x: new Date(key),
-				y: portfolioData[key]['portfolioNetWorthPercent']
+				y: allData['chartData'][key]['portfolioNetWorthPercent']
 			});
 			stockChartData.push({
 				x: new Date(key),
-				y: portfolioData[key]['stockPricePercent']
+				y: allData['chartData'][key]['stockPricePercent']
+			});
+			stockQuantityData.push({
+				x: new Date(key),
+				y: allData['chartData'][key]['stockQuantity']
+			});
+			
+			for (var indicatorName in allData['chartData'][key]['indicators']) {
+				if (allData['chartData'][key]['indicators'].hasOwnProperty(indicatorName)) {
+					if (!indicatorData[indicatorName]) {
+						indicatorData[indicatorName] = [];
+					}
+					indicatorData[indicatorName].push({
+						x: new Date(key),
+						y: allData['chartData'][key]['indicators'][indicatorName]
+					});
+				}
+			}
+		}
+	}
+	for (var indicatorName in allData['indicators']) {
+		if (allData['indicators'].hasOwnProperty(indicatorName)) {
+			var color = randomNum(0,255) + ', ' + randomNum(0,255) + ', ' + randomNum(0,255)
+			indicatorDataSets.push({
+				label: indicatorName,
+				data: indicatorData[indicatorName],
+				backgroundColor: 'rgb('+color+', 0.2)',
+				borderColor: 'rgb('+color+', 1)'
 			});
 		}
 	}
@@ -278,8 +311,8 @@ function renderChart(portfolioData) {
 	} else if (settings.simulation.length > 52) {
 		timeUnit = 'month';
 	}
-	var canvas = document.getElementById("myChart");
-	var chart = new Chart(canvas.getContext("2d"), {
+	var canvasPrices = document.getElementById("chartPrices");
+	var chartPrices = new Chart(canvasPrices.getContext("2d"), {
 		type: 'line',
 		data: {
 			datasets: [{
@@ -293,6 +326,74 @@ function renderChart(portfolioData) {
 				backgroundColor: 'rgb(206, 153, 33, 0)',
 				borderColor: 'rgb(206, 153, 33, 1)'
 			}]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			legend: {
+				display: true
+			},
+			scales: {
+				xAxes: [{
+					type: 'time',
+					distribution: 'linear',
+					time: {
+						unit: timeUnit,
+						unitStepSize: 1
+					}
+				}],
+				yAxes: [{
+					ticks: {
+						callback: function (value) {
+							return value + '%';
+						}
+					}
+				}]
+			}
+		}
+	});
+	console.log(stockQuantityData);
+	var canvasHoldings = document.getElementById("chartHoldings");
+	var chartHoldings = new Chart(canvasHoldings.getContext("2d"), {
+		type: 'line',
+		data: {
+			datasets: [{
+				label: settings.stock.ticker + ' Shares',
+				data: stockQuantityData,
+				backgroundColor: 'rgb(33, 206, 153, 0.2)',
+				borderColor: 'rgb(33, 206, 153, 1)'
+			}]
+		},
+		options: {
+			responsive: true,
+			maintainAspectRatio: false,
+			legend: {
+				display: true
+			},
+			scales: {
+				xAxes: [{
+					type: 'time',
+					distribution: 'linear',
+					time: {
+						unit: timeUnit,
+						unitStepSize: 1
+					}
+				}],
+				yAxes: [{
+					ticks: {
+						callback: function (value) {
+							return value + ' shares';
+						}
+					}
+				}]
+			}
+		}
+	});
+	var canvasIndicators = document.getElementById("chartIndicators");
+	var chartIndicators = new Chart(canvasIndicators.getContext("2d"), {
+		type: 'line',
+		data: {
+			datasets: indicatorDataSets
 		},
 		options: {
 			responsive: true,

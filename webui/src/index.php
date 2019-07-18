@@ -76,7 +76,9 @@
 					</tbody>
 				</table>
 				<div class="chart-wrap">
-					<canvas id="myChart" width="400" height="400"></canvas>
+					<canvas id="chartPrices" width="400" height="400"></canvas>
+					<canvas id="chartHoldings" width="400" height="400"></canvas>
+					<canvas id="chartIndicators" width="400" height="400"></canvas>
 				</div>
 				<div class="transactions">
 					<table>
