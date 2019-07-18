@@ -13,4 +13,4 @@ done
 set -x
 
 # run flask server
-python3 app.py
+gunicorn --workers 10 --bind 0.0.0.0:5000 wsgi
