@@ -46,7 +46,6 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 	stockPrices[stock] = {}
 	for row in cursor.fetchall():
 		stockPrices[stock][row['date'].strftime('%Y-%m-%d')] = row['close_price']
-	print(stockPrices)
 
 	# run simulation
 	portfolio = { 'cash': cash }
@@ -68,36 +67,33 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 				startStockPrice = stockPrice
 			for indicatorName in indicatorSettings:
 				indicatorValue = float(getattr(indicators, indicatorName).main(stock, date.strftime('%Y-%m-%d')))
-				indicatorChartData[indicatorName] = indicatorValue
 				weight = indicatorSettings[indicatorName]
 				numerator += indicatorValue * weight
 				denominator += weight
+				indicatorChartData[indicatorName] = indicatorValue * weight
 			if denominator != 0:
-				averageIndicatorValue = numerator / denominator
-			# do math
-			if averageIndicatorValue >= 0:
-				fundsAllocated = portfolio['cash'] * averageIndicatorValue * 0.01
-			else:
-				fundsAllocated = (portfolio['cash'] + (stockPrice * portfolio[stock])) * averageIndicatorValue * 0.01
-			if abs(fundsAllocated) > stockPrice:
+				averageIndicatorValue = (numerator / denominator) * 0.01 
 				# buy / sell
-				quantity = int(fundsAllocated / stockPrice)
-				if quantity > 0:
-					action = 'BUY'
-					portfolio[stock] += quantity
-					portfolio['cash'] -= stockPrice * quantity
-				elif quantity < 0:
-					action = 'SELL'
-					portfolio[stock] += quantity
-					portfolio['cash'] -= stockPrice * quantity
+			fundsAllocated = portfolio['cash'] + (stockPrice * portfolio[stock])
+			quantityPossible = int(fundsAllocated / stockPrice)
+			quantityShouldHave = int(quantityPossible * averageIndicatorValue)
+			quantityToMove = quantityShouldHave - portfolio[stock]
+			if quantityToMove > 0:
+				action = 'BUY'
+				portfolio[stock] += quantityToMove
+				portfolio['cash'] -= stockPrice * quantityToMove
+			elif quantityToMove < 0:
+				action = 'SELL'
+				portfolio[stock] += quantityToMove
+				portfolio['cash'] -= stockPrice * quantityToMove
+			if quantityToMove != 0:
 				results['transactions'].append({
 					'date': date.strftime('%Y-%m-%d'),
 					'move': action,
 					'stock': stock,
-					'quantity': quantity,
+					'quantity': quantityToMove,
 					'price': stockPrice
 				})
-			print(portfolio)
 			results['chartData'][date.strftime('%Y-%m-%d')] = {
 				'portfolioNetWorth': portfolioNetWorth(portfolio, date),
 				'portfolioNetWorthPercent': portfolioNetWorth(portfolio, date) / cash * 100 - 100,
