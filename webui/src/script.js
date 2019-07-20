@@ -26,6 +26,10 @@ var simulations = {
 	// stockTicker: { "1": {}, "55": {} }
 };
 
+var chartIndicators,
+	chartHoldings,
+	chartPrices;
+
 var today = new Date();
 var dd = String(today.getDate()).padStart(2, '0');
 var mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -63,6 +67,85 @@ function initializeHTML() {
 		success: function(returnData){
 			listOfAllStocks = returnData;
 		}
+	});
+	function chartOptions(chartName) {
+		var tickLabel,
+			timeUnit;
+		if (chartName === 'holdings') {
+			tickLabel = ' shares';
+		} else {
+			tickLabel = '%'
+		}
+		if (settings.simulation.length < 6) {
+			timeUnit = 'day';
+		} else if (settings.simulation.length < 52) {
+			timeUnit = 'week';
+		} else if (settings.simulation.length >= 52) {
+			timeUnit = 'month';
+		}
+		return {
+			responsive: true,
+			maintainAspectRatio: false,
+			legend: {
+				display: true
+			},
+			scales: {
+				xAxes: [{
+					type: 'time',
+					distribution: 'linear',
+					time: {
+						unit: timeUnit,
+						unitStepSize: 1
+					}
+				}],
+				yAxes: [{
+					ticks: {
+						callback: function (value) {
+							return value + tickLabel;
+						}
+					}
+				}]
+			}
+		};
+	}
+	var canvasPrices = document.getElementById("chartPrices");
+	chartPrices = new Chart(canvasPrices.getContext("2d"), {
+		type: 'line',
+		data: {
+			datasets: [{
+				label: 'Portfolio Net Worth',
+				data: [],
+				backgroundColor: 'rgb(33, 206, 153, 0.2)',
+				borderColor: 'rgb(33, 206, 153, 1)'
+			}, {
+				label: settings.stock.ticker + ' Price',
+				data: [],
+				backgroundColor: 'rgb(206, 153, 33, 0)',
+				borderColor: 'rgb(206, 153, 33, 1)'
+			}]
+		},
+		options: chartOptions('prices')
+	});
+	var canvasHoldings = document.getElementById("chartHoldings");
+	chartHoldings = new Chart(canvasHoldings.getContext("2d"), {
+		type: 'line',
+		data: {
+			datasets: [{
+				label: settings.stock.ticker + ' Shares',
+				data: [],
+				backgroundColor: 'rgb(33, 206, 153, 0.2)',
+				borderColor: 'rgb(33, 206, 153, 1)'
+			}]
+		},
+		options: chartOptions('holdings')
+	});
+	var canvasIndicators = document.getElementById("chartIndicators");
+	chartIndicators = new Chart(canvasIndicators.getContext("2d"), {
+		type: 'line',
+		data: {
+			datasets: []
+		},
+		options: chartOptions('indicators')
 	});
 }
 
@@ -138,6 +221,7 @@ function indicatorEnabledChanged(indicatorName) {
 		indicators[indicatorName].isEnabled = true;
 	} else {
 		indicators[indicatorName].isEnabled = false;
+		simulation();
 	}
 	doMath();
 }
@@ -303,123 +387,26 @@ function renderChart(allData) {
 			});
 		}
 	}
-	var timeUnit;
 	if (settings.simulation.length < 6) {
 		timeUnit = 'day';
 	} else if (settings.simulation.length < 52) {
 		timeUnit = 'week';
-	} else if (settings.simulation.length > 52) {
+	} else if (settings.simulation.length >= 52) {
 		timeUnit = 'month';
 	}
-	var canvasPrices = document.getElementById("chartPrices");
-	var chartPrices = new Chart(canvasPrices.getContext("2d"), {
-		type: 'line',
-		data: {
-			datasets: [{
-				label: 'Portfolio Net Worth',
-				data: chartData,
-				backgroundColor: 'rgb(33, 206, 153, 0.2)',
-				borderColor: 'rgb(33, 206, 153, 1)'
-			}, {
-				label: settings.stock.ticker + ' Price',
-				data: stockChartData,
-				backgroundColor: 'rgb(206, 153, 33, 0)',
-				borderColor: 'rgb(206, 153, 33, 1)'
-			}]
-		},
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			legend: {
-				display: true
-			},
-			scales: {
-				xAxes: [{
-					type: 'time',
-					distribution: 'linear',
-					time: {
-						unit: timeUnit,
-						unitStepSize: 1
-					}
-				}],
-				yAxes: [{
-					ticks: {
-						callback: function (value) {
-							return value + '%';
-						}
-					}
-				}]
-			}
-		}
-	});
-	console.log(stockQuantityData);
-	var canvasHoldings = document.getElementById("chartHoldings");
-	var chartHoldings = new Chart(canvasHoldings.getContext("2d"), {
-		type: 'line',
-		data: {
-			datasets: [{
-				label: settings.stock.ticker + ' Shares',
-				data: stockQuantityData,
-				backgroundColor: 'rgb(33, 206, 153, 0.2)',
-				borderColor: 'rgb(33, 206, 153, 1)'
-			}]
-		},
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			legend: {
-				display: true
-			},
-			scales: {
-				xAxes: [{
-					type: 'time',
-					distribution: 'linear',
-					time: {
-						unit: timeUnit,
-						unitStepSize: 1
-					}
-				}],
-				yAxes: [{
-					ticks: {
-						callback: function (value) {
-							return value + ' shares';
-						}
-					}
-				}]
-			}
-		}
-	});
-	var canvasIndicators = document.getElementById("chartIndicators");
-	var chartIndicators = new Chart(canvasIndicators.getContext("2d"), {
-		type: 'line',
-		data: {
-			datasets: indicatorDataSets
-		},
-		options: {
-			responsive: true,
-			maintainAspectRatio: false,
-			legend: {
-				display: true
-			},
-			scales: {
-				xAxes: [{
-					type: 'time',
-					distribution: 'linear',
-					time: {
-						unit: timeUnit,
-						unitStepSize: 1
-					}
-				}],
-				yAxes: [{
-					ticks: {
-						callback: function (value) {
-							return value + '%';
-						}
-					}
-				}]
-			}
-		}
-	});
+
+	console.log(chartPrices);
+	chartPrices.options.scales.xAxes[0].time.unit = timeUnit;
+	console.log(chartPrices);
+	chartPrices.data.datasets[0].data = chartData;
+	chartPrices.data.datasets[1].data = stockChartData;
+	chartPrices.update();
+	chartHoldings.options.scales.xAxes[0].time.unit = timeUnit;
+	chartHoldings.data.datasets[0].data = stockQuantityData;
+	chartHoldings.update();
+	chartIndicators.options.scales.xAxes[0].time.unit = timeUnit;
+	chartIndicators.data.datasets = indicatorDataSets;
+	chartIndicators.update();
 }
 
 function renderTransactions(transactions) {
