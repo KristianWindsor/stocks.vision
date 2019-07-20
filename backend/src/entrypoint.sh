@@ -13,4 +13,9 @@ done
 set -x
 
 # run flask server
-gunicorn --workers 10 --bind 0.0.0.0:5000 wsgi
+if [ "$USE_GUNICORN" == "true" ]
+then
+	gunicorn --workers 10 --timeout 300 --bind 0.0.0.0:5000 wsgi
+else
+	python3 app.py
+fi

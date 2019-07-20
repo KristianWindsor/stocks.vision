@@ -16,6 +16,7 @@ services:
     environment:
       - MYSQL_HOSTNAME=mysql
       - CRAWLER_URL=http://crawler:5001
+      - USE_GUNICORN=false
     ports:
       - 5000:5000
     volumes:
