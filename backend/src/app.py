@@ -49,7 +49,6 @@ def indicator():
 	stock = data['stock']
 	date = data['date']
 	# run indicator py script with given stock
-	# return results
 	results = {}
 	if isinstance(indicator, (list,)):
 		print('this is a list')
@@ -90,19 +89,6 @@ def runSimulation():
 	indicators = data['indicators']
 	endDate = datetime.now()
 	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
-	# crawler
-	rowCount = cursor.execute("SELECT id FROM stock_data WHERE ticker = '"+stock+"' AND date <= '" + startDate.strftime('%Y-%m-%d') + "'")
-	if rowCount == 0:
-		url = os.environ['CRAWLER_URL'] + '/runScript'
-		data = json.dumps({
-			"crawlerName": "StockData",
-			"startDate": "2019-01-15",
-			"stockTicker": stock,
-			"token": "hello"
-		})
-		headers = { "Content-Type":"application/json" }
-		res = requests.post(url, data=data, headers=headers)
-		print(res.text)
 	# get results
 	results = simulation.RunSimulation.main(stock, indicators, startDate, endDate, cash)
 	# return results
