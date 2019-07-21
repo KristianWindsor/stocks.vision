@@ -58,19 +58,22 @@
 								<a onclick="setSimulationLength(1)" class="tp1">1 Week</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(3)" class="tp3">3 Weeks</a>
+								<a onclick="setSimulationLength(2)" class="tp2">2 Weeks</a>
 							</td>
 							<td>
 								<a onclick="setSimulationLength(4)" class="tp4">1 Month</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(12)" class="tp12">3 Months</a>
+								<a onclick="setSimulationLength(13)" class="tp13">3 Months</a>
+							</td>
+							<td>
+								<a onclick="setSimulationLength(26)" class="tp26">6 Months</a>
 							</td>
 							<td>
 								<a onclick="setSimulationLength(52)" class="tp52">1 Year</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(156)" class="tp156">3 Years</a>
+								<a onclick="setSimulationLength(104)" class="tp104">2 Years</a>
 							</td>
 						</tr>
 					</tbody>

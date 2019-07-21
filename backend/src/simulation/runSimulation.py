@@ -69,7 +69,7 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 				indicatorValue = float(getattr(indicators, indicatorName).main(stock, date.strftime('%Y-%m-%d')))
 				weight = indicatorSettings[indicatorName]
 				numerator += indicatorValue * weight
-				denominator += weight
+				denominator += abs(weight)
 				indicatorChartData[indicatorName] = indicatorValue * weight
 			if denominator != 0:
 				averageIndicatorValue = (numerator / denominator) * 0.01 

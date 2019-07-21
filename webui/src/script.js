@@ -8,9 +8,7 @@ var settings = {
 		price: 178.97
 	},
 	simulation: {
-		length: 3,
-		sellStrategy: 0,
-		sellTimePeriod: '1 week'
+		length: 4
 	},
 	spendableCash: '$1000',
 	isAnalyzing: false
@@ -208,11 +206,9 @@ function indicatorWeightChanged(indicatorName) {
 	var indicatorValue = parseFloat($('.' + indicatorName + ' .indicatorValue').html());
 	var trackbarValue = parseFloat($('#' + indicatorName).val());
 	// update values
-	if (trackbarValue >= 0 && trackbarValue <= 10) {
-		indicators[indicatorName].weight = trackbarValue;
-		$('.' + indicatorName + ' .trackbarValue').html(trackbarValue);
-		simulation();
-	}
+	indicators[indicatorName].weight = trackbarValue;
+	$('.' + indicatorName + ' .trackbarValue').html(trackbarValue);
+	simulation();
 	doMath();
 }
 function indicatorEnabledChanged(indicatorName) {
@@ -263,7 +259,7 @@ function GETindicator(indicator) {
 					indicators[indicatorName] = {
 						isEnabled: true,
 						value: returnData[indicatorName],
-						weight: 5
+						weight: 1
 					};
 				} else {
 					indicators[indicatorName].value = returnData[indicatorName];
@@ -278,7 +274,7 @@ function GETindicator(indicator) {
 			 			<div class="`+indicatorName+`">
 							<input type="checkbox" onchange="indicatorEnabledChanged('`+indicatorName+`')" `+checkboxMaybeChecked+` /><br>
 							`+indicatorName+`
-							<input id="`+indicatorName+`" type="range" min="0" max="10" value="`+indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" />
+							<input id="`+indicatorName+`" type="range" min="-10" max="10" value="`+indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" />
 							<span class="indicatorValue">`+(Math.round(returnData[indicatorName] * 10) / 10)+`%</span> * <span class="trackbarValue">`+indicators[indicatorName].weight+`</span>
 						</div>
 			 		`;
