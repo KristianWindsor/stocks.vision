@@ -278,7 +278,7 @@ function GETindicator(indicator) {
 			 			<div class="`+indicatorName+`">
 							<input type="checkbox" onchange="indicatorEnabledChanged('`+indicatorName+`')" `+checkboxMaybeChecked+` /><br>
 							`+indicatorName+`
-							<input id="`+indicatorName+`" type="range" min="0" max="10" value="`+indicators[indicatorName].weight+`" onchange="indicatorWeightChanged('`+indicatorName+`');" />
+							<input id="`+indicatorName+`" type="range" min="0" max="10" value="`+indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" />
 							<span class="indicatorValue">`+(Math.round(returnData[indicatorName] * 10) / 10)+`%</span> * <span class="trackbarValue">`+indicators[indicatorName].weight+`</span>
 						</div>
 			 		`;
@@ -308,7 +308,7 @@ function simulation() {
 
 	for (var key in indicators) {
 		if (indicators.hasOwnProperty(key)) {
-			if (indicators[key]['isEnabled']) {
+			if (indicators[key]['isEnabled'] && indicators[key]['weight'] != 0) {
 				indicatorSettings[key] = indicators[key]['weight'];
 			}
 		}
@@ -395,13 +395,13 @@ function renderChart(allData) {
 		timeUnit = 'month';
 	}
 
-	console.log(chartPrices);
 	chartPrices.options.scales.xAxes[0].time.unit = timeUnit;
-	console.log(chartPrices);
+	chartPrices.data.datasets[1].label = settings.stock.ticker + ' Price';
 	chartPrices.data.datasets[0].data = chartData;
 	chartPrices.data.datasets[1].data = stockChartData;
 	chartPrices.update();
 	chartHoldings.options.scales.xAxes[0].time.unit = timeUnit;
+	chartHoldings.data.datasets[0].label = settings.stock.ticker + ' Shares';
 	chartHoldings.data.datasets[0].data = stockQuantityData;
 	chartHoldings.update();
 	chartIndicators.options.scales.xAxes[0].time.unit = timeUnit;
