@@ -10,18 +10,22 @@ var settings = {
 	simulation: {
 		length: 4
 	},
+	indicators: { /*
+		indicatorName: {
+			isEnabled: true,
+			value: 0.618,
+			weight: 5 
+		}*/
+	},
 	spendableCash: '$1000',
 	isAnalyzing: false
 };
-var indicators = {
-/*	'example': {
-		isEnabled: true,
-		value: undefined,
-		weight: 5
-	}*/
-};
-var simulations = {
-	// stockTicker: { "1": {}, "55": {} }
+var simulationData = { /*
+	stockID: {
+		indicatorConfigID: {
+			simulationDuration: data
+		}
+	} */
 };
 
 var chartIndicators,
@@ -39,26 +43,9 @@ today = yyyy + '-' + mm + '-' + dd;
 // set values
 function initializeHTML() {
 	$('#stock').val(settings.stock.ticker);
-	$('#holdDuration').val(settings.simulation.sellTimePeriod);
-	if (settings.simulation.sellStrategy == 0) {
-		$('#sell-indicators').prop("checked", true);
-	} else {
-		$('#sell-time').prop("checked", true);
-	}
-	$('#simulationDuration').val(settings.simulation.length);
 	$('#spendableCash').val(settings.spendableCash);
 	$('.tp' + settings.simulation.length.toString()).addClass('picked');
-	for (var indicatorName in indicators) {
-		if (indicators.hasOwnProperty(indicatorName)) {
-			if (indicators[indicatorName].isEnabled) {
-				$('.' + indicatorName + ' input[type="checkbox"]').prop('checked', true);
-			} else {
-				$('.' + indicatorName + ' input[type="checkbox"]').prop('checked', false);
-			}
-			indicatorWeightChanged(indicatorName);
-		}
-	}
-	GETindicator('*');
+	GETindicator(settings.stock.ticker, '*');
 	$.ajax({
 		type: 'GET',
 		url: API_URL + '/tickerlist',
@@ -162,11 +149,11 @@ function doMath() {
 	// average indicator values
 	var numerator = 0,
 		denominator = 0;
-	for (var indicatorName in indicators) {
-		if (indicators.hasOwnProperty(indicatorName)) {
-			var value = indicators[indicatorName].value,
-				weight = indicators[indicatorName].weight,
-				isEnabled = indicators[indicatorName].isEnabled;
+	for (var indicatorName in settings.indicators) {
+		if (settings.indicators.hasOwnProperty(indicatorName)) {
+			var value = settings.indicators[indicatorName].value,
+				weight = settings.indicators[indicatorName].weight,
+				isEnabled = settings.indicators[indicatorName].isEnabled;
 			if (isEnabled && weight > 0 && value) {
 				numerator += value * weight;
 				denominator += weight;
@@ -206,79 +193,66 @@ function indicatorWeightChanged(indicatorName) {
 	var indicatorValue = parseFloat($('.' + indicatorName + ' .indicatorValue').html());
 	var trackbarValue = parseFloat($('#' + indicatorName).val());
 	// update values
-	indicators[indicatorName].weight = trackbarValue;
+	settings.indicators[indicatorName].weight = trackbarValue;
 	$('.' + indicatorName + ' .trackbarValue').html(trackbarValue);
 	simulation();
 	doMath();
 }
 function indicatorEnabledChanged(indicatorName) {
 	if ($('.' + indicatorName + ' input[type="checkbox"]').is(':checked')) {
-		GETindicator(indicatorName)
-		indicators[indicatorName].isEnabled = true;
+		GETindicator(settings.stock.ticker, indicatorName)
+		settings.indicators[indicatorName].isEnabled = true;
 	} else {
-		indicators[indicatorName].isEnabled = false;
+		settings.indicators[indicatorName].isEnabled = false;
 		simulation();
 	}
 	doMath();
 }
 
-function checkForIndicatorUpdate() {
-	// stock
+function stockInputChanged() {
 	var stock = $('#stock').val().toUpperCase();
 	if (listOfAllStocks.indexOf(stock) !== -1 && settings.stock.ticker !== stock) {
 		settings.stock.ticker = stock;
-		GETindicator('*');
-	}
-	// hold duration
-	// simulation duration
-	// spendable cash
-	// stock price update
-	// enable indicator
-	if (true == false) {
-		for (var indicatorName in indicators) {
-			GETindicator(indicatorName);
-		}
+		GETindicator(stock, '*');
 	}
 }
-function GETindicator(indicator) {
-	var stock = $('#stock').val().toUpperCase();
+function GETindicator(stock, indicator) {
 	$.ajax({
 		type: 'POST',
 		url: API_URL + '/indicator',
 		data: JSON.stringify({ 
-			'indicator': indicator, 
+			'indicator': indicator,
 			'stock': stock,
 			'date': today
 		}),
 		contentType: "application/json",
 		success: function(returnData){
-			console.log(returnData);
 			Object.keys(returnData).forEach(function(indicatorName) {
 				// update value
-				if (!indicators.hasOwnProperty(indicatorName)) {
-					indicators[indicatorName] = {
+				if (!settings.indicators.hasOwnProperty(indicatorName)) {
+					settings.indicators[indicatorName] = {
 						isEnabled: true,
 						value: returnData[indicatorName],
 						weight: 1
 					};
 				} else {
-					indicators[indicatorName].value = returnData[indicatorName];
+					settings.indicators[indicatorName].value = returnData[indicatorName];
 				}
 				// populate html
 				if (!$('.'+indicatorName).length) {
 					var checkboxMaybeChecked = '';
-					if (indicators[indicatorName].isEnabled == true) {
+					if (settings.indicators[indicatorName].isEnabled == true) {
 						checkboxMaybeChecked = 'checked="checked"';
 					}
-			 		var html = `
-			 			<div class="`+indicatorName+`">
+					var html = `
+						<div class="`+indicatorName+`">
 							<input type="checkbox" onchange="indicatorEnabledChanged('`+indicatorName+`')" `+checkboxMaybeChecked+` /><br>
 							`+indicatorName+`
-							<input id="`+indicatorName+`" type="range" min="-10" max="10" value="`+indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" />
-							<span class="indicatorValue">`+(Math.round(returnData[indicatorName] * 10) / 10)+`%</span> * <span class="trackbarValue">`+indicators[indicatorName].weight+`</span>
+							<input id="`+indicatorName+`" type="range" min="-10" max="10" value="`+settings.indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" />
+							<span class="indicatorValue">`+(Math.round(returnData[indicatorName] * 10) / 10)+`%</span> * <span class="trackbarValue">`+settings.indicators[indicatorName].weight+`</span>
 						</div>
-			 		`;
-			 		$('.fourth.indicators').append(html);
+					`;
+					$('.fourth.indicators').append(html);
 				} else {
 					$('.'+indicatorName+' .indicatorValue').html((Math.round(returnData[indicatorName] * 10) / 10) + '%');
 				}
@@ -293,38 +267,54 @@ function GETindicator(indicator) {
 
 
 function simulation() {
-	var stock = $('#stock').val().toUpperCase(),
+	var stock = settings.stock.ticker,
 		length = settings.simulation.length,
 		indicatorSettings = {},
+		indicatorConfigID = '',
 		simID = stock,
 		completedSimulations = {};
-		if (simulations[simID] && simulations[simID][length]) {
+		if (simulationData[simID] && simulationData[simID][length]) {
 			completedSimulations = simulations[simID][length];
 		}
 
-	for (var key in indicators) {
-		if (indicators.hasOwnProperty(key)) {
-			if (indicators[key]['isEnabled'] && indicators[key]['weight'] != 0) {
-				indicatorSettings[key] = indicators[key]['weight'];
+	for (var key in settings.indicators) {
+		if (settings.indicators.hasOwnProperty(key)) {
+			if (settings.indicators[key]['isEnabled'] && settings.indicators[key]['weight'] != 0) {
+				indicatorSettings[key] = settings.indicators[key]['weight'];
+				indicatorConfigID += key;
+				indicatorConfigID += settings.indicators[key]['weight'];
 			}
 		}
 	}
-	$.ajax({
-		type: 'POST',
-		url: API_URL + '/simulation',
-		data: JSON.stringify({ 
-			'stock': stock,
-			'length': length, 
-			'indicators': indicatorSettings,
-			'completedSimulations': completedSimulations
-		}),
-		contentType: "application/json",
-		success: function(returnData){
-			console.log(returnData);
-			renderChart(returnData);
-			//renderTransactions(returnData['transactions']);
-		}
-	});
+	if (!simulationData.hasOwnProperty(stock)) {
+		simulationData[stock] = {};
+	}
+	if (!simulationData[stock].hasOwnProperty(indicatorConfigID)) {
+		simulationData[stock][indicatorConfigID] = {};
+	}
+	if (!simulationData[stock][indicatorConfigID].hasOwnProperty(length)) {
+		simulationData[stock][indicatorConfigID][length] = {};
+	}
+	if (Object.entries(simulationData[stock][indicatorConfigID][length]).length === 0) {
+		$.ajax({
+			type: 'POST',
+			url: API_URL + '/simulation',
+			data: JSON.stringify({ 
+				'stock': stock,
+				'length': length, 
+				'indicators': indicatorSettings,
+				'completedSimulations': completedSimulations
+			}),
+			contentType: "application/json",
+			success: function(returnData){
+				simulationData[stock][indicatorConfigID][length] = returnData;
+				renderChart(returnData);
+				//renderTransactions(returnData['transactions']);
+			}
+		});
+	} else {
+		renderChart(simulationData[stock][indicatorConfigID][length]);
+	}
 }
 
 function setSimulationLength(length) {

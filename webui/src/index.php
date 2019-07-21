@@ -17,7 +17,7 @@
 			</h1>
 			<div>
 				<span>Stock</span><br>
-				<input id="stock" type="text" value="" onchange="checkForIndicatorUpdate()" />
+				<input id="stock" type="text" value="" onchange="stockInputChanged()" />
 			</div>
 			<button id="simulationButton">
 				Run Stock Analysis
