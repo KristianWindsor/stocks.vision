@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import os
 import pymysql
-from datetime import date, timedelta
+from datetime import datetime, date, timedelta
 import indicators
 
 
@@ -13,9 +13,27 @@ def portfolioNetWorth(portfolio, date):
 	for ticker in portfolio:
 		if ticker != 'cash':
 			quantity = float(portfolio[ticker])
-			price = float(stockPrices[ticker][date.strftime('%Y-%m-%d')])
+			price = float(getStockPrice(ticker, date))
 			netWorth += quantity * price
 	return netWorth
+
+
+def percentDifference(no1, no2):
+	return (abs(no1 - no2) / ((no1 + no2) / 2 )) * 100
+
+
+def closestDate(givenDate, dateList):
+	returnDate = None
+	for d in dateList:
+		d = datetime.strptime(d, '%Y-%m-%d')
+		if d < givenDate:
+			if returnDate == None or d > returnDate:
+				returnDate = d
+	return returnDate
+
+
+def getStockPrice(ticker, date):
+	return float(stockPrices[ticker][closestDate(date, stockPrices[ticker]).strftime('%Y-%m-%d')])
 
 
 def main(stock, indicatorSettings, startDate, endDate, cash):
@@ -31,7 +49,8 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 	results = {
 		'indicators': indicatorSettings,
 		'chartData': {},
-		'transactions': []
+		'transactions': [],
+		'gain': 0
 	}
 	print(stock)
 	print(indicatorSettings)
@@ -62,7 +81,7 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			if stock not in portfolio:
 				portfolio[stock] = 0
 			#
-			stockPrice = float(stockPrices[stock][date.strftime('%Y-%m-%d')])
+			stockPrice = float(getStockPrice(stock, date))
 			if not startStockPrice:
 				startStockPrice = stockPrice
 			for indicatorName in indicatorSettings:
@@ -96,13 +115,14 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 				})
 			results['chartData'][date.strftime('%Y-%m-%d')] = {
 				'portfolioNetWorth': portfolioNetWorth(portfolio, date),
-				'portfolioNetWorthPercent': portfolioNetWorth(portfolio, date) / cash * 100 - 100,
+				# 'portfolioNetWorthPercent': portfolioNetWorth(portfolio, date) / cash * 100 - 100,
+				'portfolioNetWorthPercent': percentDifference(cash, portfolioNetWorth(portfolio, date)),
 				'stockPrice': stockPrice,
 				'stockPricePercent': stockPrice / startStockPrice * 100 - 100,
 				'stockQuantity': portfolio[stock],
 				'indicators': indicatorChartData
 			}
-
+	results['gain'] = percentDifference(cash, portfolioNetWorth(portfolio, date))
 
 	return results
 

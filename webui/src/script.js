@@ -136,7 +136,7 @@ function initializeHTML() {
 
 function startAnalyzing() {
 	$('.fourth.indicators input[type="range"]').prop('disabled', true);
-	simulation();
+	simulationAnalyze();
 	$('#simulationButton').html('Stop Simulations');
 }
 function stopAnalyzing() {
@@ -188,7 +188,6 @@ function doMath() {
 }
 
 function indicatorWeightChanged(indicatorName) {
-	console.log(indicatorName);
 	// get values
 	var indicatorValue = parseFloat($('.' + indicatorName + ' .indicatorValue').html());
 	var trackbarValue = parseFloat($('#' + indicatorName).val());
@@ -265,27 +264,42 @@ function GETindicator(stock, indicator) {
 	});
 }
 
-
-function simulation() {
-	var stock = settings.stock.ticker,
-		length = settings.simulation.length,
-		indicatorSettings = {},
-		indicatorConfigID = '',
-		simID = stock,
-		completedSimulations = {};
-		if (simulationData[simID] && simulationData[simID][length]) {
-			completedSimulations = simulations[simID][length];
-		}
-
+function generateIndicatorConfigID() {
+	var indicatorConfigID = '';
 	for (var key in settings.indicators) {
 		if (settings.indicators.hasOwnProperty(key)) {
 			if (settings.indicators[key]['isEnabled'] && settings.indicators[key]['weight'] != 0) {
-				indicatorSettings[key] = settings.indicators[key]['weight'];
 				indicatorConfigID += key;
 				indicatorConfigID += settings.indicators[key]['weight'];
 			}
 		}
 	}
+	return indicatorConfigID;
+}
+function getIndicatorSettings() {
+	var indicatorSettings = {};
+	for (var key in settings.indicators) {
+		if (settings.indicators.hasOwnProperty(key)) {
+			if (settings.indicators[key]['isEnabled'] && settings.indicators[key]['weight'] != 0) {
+				indicatorSettings[key] = settings.indicators[key]['weight'];
+			}
+		}
+	}
+	return indicatorSettings;
+}
+
+
+function simulation() {
+	var stock = settings.stock.ticker,
+		length = settings.simulation.length,
+		indicatorSettings = getIndicatorSettings(),
+		indicatorConfigID = generateIndicatorConfigID(),
+		simID = stock,
+		completedSimulations = {};
+	if (simulationData[simID] && simulationData[simID][length]) {
+		completedSimulations = simulations[simID][length];
+	}
+
 	if (!simulationData.hasOwnProperty(stock)) {
 		simulationData[stock] = {};
 	}
@@ -315,6 +329,61 @@ function simulation() {
 	} else {
 		renderChart(simulationData[stock][indicatorConfigID][length]);
 	}
+}
+
+
+function simulationAnalyze() {
+	// please run simulationAnalyze
+	// here are the past results
+	// > here is a simulation that did better than yours
+	// cool, now do it again
+	// let me display this new simulation
+	var stock = settings.stock.ticker,
+		length = settings.simulation.length,
+		indicatorSettings = getIndicatorSettings(),
+		indicatorConfigID = generateIndicatorConfigID(),
+		simID = stock,
+		completedSimulations = {};
+	for (var indID in simulationData[simID]) {
+		if (simulationData[simID].hasOwnProperty(indID)) {
+			completedSimulations[indID] = simulationData[simID][indID][length]['gain'];
+		}
+	}
+
+	$.ajax({
+		type: 'POST',
+		url: API_URL + '/simulationAnalyze',
+		data: JSON.stringify({ 
+			'stock': stock,
+			'length': length, 
+			'indicators': indicatorSettings,
+			'completedSimulations': completedSimulations
+		}),
+		contentType: "application/json",
+		success: function(returnData){
+			if (!simulationData.hasOwnProperty(stock)) {
+				simulationData[simID] = {};
+			}
+			if (!simulationData[simID].hasOwnProperty(indicatorConfigID)) {
+				simulationData[simID][indicatorConfigID] = {};
+			}
+			if (!simulationData[simID][indicatorConfigID].hasOwnProperty(length)) {
+				simulationData[simID][indicatorConfigID][length] = {};
+			}
+			simulationData[stock][indicatorConfigID][length] = returnData;
+			if (settings.isAnalyzing) {
+				renderChart(returnData);
+				for (var indicatorName in returnData['indicators']) {
+					if (returnData['indicators'].hasOwnProperty(indicatorName)) {
+						$('#' + indicatorName).val(returnData['indicators'][indicatorName]);
+						$('.' + indicatorName + ' .trackbarValue').html(returnData['indicators'][indicatorName]);
+					}
+				}
+				doMath();
+				simulationAnalyze();
+			}
+		}
+	});
 }
 
 function setSimulationLength(length) {

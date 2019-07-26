@@ -10,6 +10,7 @@ import datetime
 from datetime import datetime, timedelta
 import dateutil.relativedelta
 import requests
+from random import randrange
 
 # write each module name in __init__.py so they can import successfully
 from os.path import dirname, basename, isfile, join
@@ -74,18 +75,9 @@ def indicator():
 @app.route('/simulation', methods=["POST"])
 @cross_origin()
 def runSimulation():
-	db = pymysql.connect(
-		host=os.environ['MYSQL_HOSTNAME'],
-		user='backend',
-		passwd='pass',
-		db='stocksvision',
-		autocommit=True
-	)
-	cursor = db.cursor(pymysql.cursors.DictCursor)
 	data = request.get_json()
 	stock = data['stock']
 	cash = 10000.00
-	completedSimulations = data['completedSimulations']
 	indicators = data['indicators']
 	endDate = datetime.now()
 	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
@@ -93,6 +85,36 @@ def runSimulation():
 	results = simulation.RunSimulation.main(stock, indicators, startDate, endDate, cash)
 	# return results
 	return results
+
+
+#
+# simulation analyze
+#
+@app.route('/simulationAnalyze', methods=["POST"])
+@cross_origin()
+def simulationAnalyze():
+	# > here are the completed simulations
+	# > please give me one that's better
+	data = request.get_json()
+	stock = data['stock']
+	completedSimulations = data['completedSimulations']
+	indicators = data['indicators']
+	cash = 10000.00
+	endDate = datetime.now()
+	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
+	# decide which weights
+	for ind in indicators:
+		indicators[ind] = randrange(-10,10)
+	# run simulation 
+	# if not better, run again
+	# return data
+	returnData = {}
+	# while True:
+	# 	returnData = simulation.RunSimulation.main(stock, indicators, startDate, endDate, cash)
+	# 	if returnData.gain > originalData.gain:
+	# 		break
+	returnData = simulation.RunSimulation.main(stock, indicators, startDate, endDate, cash)
+	return returnData
 
 #
 # stock ticker list
