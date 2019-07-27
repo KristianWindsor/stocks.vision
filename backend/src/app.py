@@ -102,18 +102,32 @@ def simulationAnalyze():
 	cash = 10000.00
 	endDate = datetime.now()
 	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
-	# decide which weights
-	for ind in indicators:
-		indicators[ind] = randrange(-10,10)
 	# run simulation 
 	# if not better, run again
 	# return data
-	returnData = {}
-	# while True:
-	# 	returnData = simulation.RunSimulation.main(stock, indicators, startDate, endDate, cash)
-	# 	if returnData.gain > originalData.gain:
-	# 		break
-	returnData = simulation.RunSimulation.main(stock, indicators, startDate, endDate, cash)
+	currentHighestGain = 0
+	for cs in completedSimulations:
+		if completedSimulations[cs] > currentHighestGain:
+			currentHighestGain = completedSimulations[cs]
+	returnData = {
+		'gain': 0
+	}
+	cnt = 0
+	while returnData['gain'] <= currentHighestGain and cnt < 100:
+		# decide indicator settings
+		indicatorConfigID = None
+		while indicatorConfigID in completedSimulations or indicatorConfigID is None:
+			indicatorConfigID = ''
+			newIndicators = {}
+			for indicatorName in indicators:
+				newVal = randrange(-10,10)
+				if newVal != 0:
+					newIndicators[indicatorName] = newVal
+					indicatorConfigID += indicatorName
+					if len(newIndicators) != 1:
+						indicatorConfigID += str(newIndicators[indicatorName])
+		returnData = simulation.RunSimulation.main(stock, newIndicators, startDate, endDate, cash)
+		cnt += 1
 	return returnData
 
 #

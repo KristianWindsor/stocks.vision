@@ -12,14 +12,17 @@ def portfolioNetWorth(portfolio, date):
 	netWorth = portfolio['cash']
 	for ticker in portfolio:
 		if ticker != 'cash':
-			quantity = float(portfolio[ticker])
+			quantity = abs(float(portfolio[ticker]['shares']))
 			price = float(getStockPrice(ticker, date))
 			netWorth += quantity * price
+			for soldShortPrice in portfolio[ticker]['shorting']:
+				netWorth -= price
+				netWorth += soldShortPrice
 	return netWorth
 
 
 def percentDifference(no1, no2):
-	return (abs(no1 - no2) / ((no1 + no2) / 2 )) * 100
+	return ((no1 - no2) / ((no1 + no2) / 2 )) * 100 * (-1)
 
 
 def closestDate(givenDate, dateList):
@@ -72,14 +75,16 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 	for i in range(delta.days + 1):
 		date = (startDate + timedelta(days=i))
 		if date.weekday() < 5 and date.strftime('%Y-%m-%d') in stockPrices[stock]:
-			print(date.strftime('%Y-%m-%d'))
 			# get indicator values
 			averageIndicatorValue = 0
 			numerator = 0
 			denominator = 0
 			indicatorChartData = {}
 			if stock not in portfolio:
-				portfolio[stock] = 0
+				portfolio[stock] = {
+					'shares': 0,
+					'shorting': []
+				}
 			#
 			stockPrice = float(getStockPrice(stock, date))
 			if not startStockPrice:
@@ -93,33 +98,46 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			if denominator != 0:
 				averageIndicatorValue = (numerator / denominator) * 0.01 
 				# buy / sell
-			fundsAllocated = portfolio['cash'] + (stockPrice * portfolio[stock])
+			fundsAllocated = portfolio['cash'] + (stockPrice * portfolio[stock]['shares'])
+			for shortedPrice in portfolio[stock]['shorting']:
+				fundsAllocated -= stockPrice
+				fundsAllocated += shortedPrice
 			quantityPossible = int(fundsAllocated / stockPrice)
 			quantityShouldHave = int(quantityPossible * averageIndicatorValue)
-			quantityToMove = quantityShouldHave - portfolio[stock]
+			currentQuantity = portfolio[stock]['shares'] - len(portfolio[stock]['shorting'])
+			quantityToMove = quantityShouldHave - currentQuantity
 			if quantityToMove > 0:
-				action = 'BUY'
-				portfolio[stock] += quantityToMove
-				portfolio['cash'] -= stockPrice * quantityToMove
+				# bull
+				while quantityToMove != 0:
+					if len(portfolio[stock]['shorting']) > 0:
+						# buy back short
+						portfolio['cash'] -= stockPrice
+						portfolio['cash'] += portfolio[stock]['shorting'][0]
+						portfolio[stock]['shorting'].pop(0)
+					else:
+						# buy shares
+						portfolio[stock]['shares'] += 1
+						portfolio['cash'] -= stockPrice
+					quantityToMove -= 1
 			elif quantityToMove < 0:
-				action = 'SELL'
-				portfolio[stock] += quantityToMove
-				portfolio['cash'] -= stockPrice * quantityToMove
-			if quantityToMove != 0:
-				results['transactions'].append({
-					'date': date.strftime('%Y-%m-%d'),
-					'move': action,
-					'stock': stock,
-					'quantity': quantityToMove,
-					'price': stockPrice
-				})
+				# bear
+				while quantityToMove != 0:
+					if portfolio[stock]['shares'] > 0:
+						# sell shares
+						portfolio[stock]['shares'] -= 1
+						portfolio['cash'] += stockPrice
+					else:
+						# sell short
+						portfolio[stock]['shorting'].append(stockPrice)
+					quantityToMove += 1
+			#
 			results['chartData'][date.strftime('%Y-%m-%d')] = {
 				'portfolioNetWorth': portfolioNetWorth(portfolio, date),
 				# 'portfolioNetWorthPercent': portfolioNetWorth(portfolio, date) / cash * 100 - 100,
 				'portfolioNetWorthPercent': percentDifference(cash, portfolioNetWorth(portfolio, date)),
 				'stockPrice': stockPrice,
 				'stockPricePercent': stockPrice / startStockPrice * 100 - 100,
-				'stockQuantity': portfolio[stock],
+				'stockQuantity': portfolio[stock]['shares'] - len(portfolio[stock]['shorting']),
 				'indicators': indicatorChartData
 			}
 	results['gain'] = percentDifference(cash, portfolioNetWorth(portfolio, date))

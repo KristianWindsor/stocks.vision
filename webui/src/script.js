@@ -264,13 +264,15 @@ function GETindicator(stock, indicator) {
 	});
 }
 
-function generateIndicatorConfigID() {
+function generateIndicatorConfigID(indicators) {
 	var indicatorConfigID = '';
-	for (var key in settings.indicators) {
-		if (settings.indicators.hasOwnProperty(key)) {
-			if (settings.indicators[key]['isEnabled'] && settings.indicators[key]['weight'] != 0) {
-				indicatorConfigID += key;
-				indicatorConfigID += settings.indicators[key]['weight'];
+	for (var indicatorName in indicators) {
+		if (indicators.hasOwnProperty(indicatorName)) {
+			if (indicators[indicatorName] != 0) {
+				indicatorConfigID += indicatorName;
+				if (indicators.length != 1) {
+					indicatorConfigID += indicators[indicatorName];
+				}
 			}
 		}
 	}
@@ -293,12 +295,7 @@ function simulation() {
 	var stock = settings.stock.ticker,
 		length = settings.simulation.length,
 		indicatorSettings = getIndicatorSettings(),
-		indicatorConfigID = generateIndicatorConfigID(),
-		simID = stock,
-		completedSimulations = {};
-	if (simulationData[simID] && simulationData[simID][length]) {
-		completedSimulations = simulations[simID][length];
-	}
+		indicatorConfigID = generateIndicatorConfigID(indicatorSettings);
 
 	if (!simulationData.hasOwnProperty(stock)) {
 		simulationData[stock] = {};
@@ -316,14 +313,12 @@ function simulation() {
 			data: JSON.stringify({ 
 				'stock': stock,
 				'length': length, 
-				'indicators': indicatorSettings,
-				'completedSimulations': completedSimulations
+				'indicators': indicatorSettings
 			}),
 			contentType: "application/json",
 			success: function(returnData){
 				simulationData[stock][indicatorConfigID][length] = returnData;
 				renderChart(returnData);
-				//renderTransactions(returnData['transactions']);
 			}
 		});
 	} else {
@@ -341,7 +336,6 @@ function simulationAnalyze() {
 	var stock = settings.stock.ticker,
 		length = settings.simulation.length,
 		indicatorSettings = getIndicatorSettings(),
-		indicatorConfigID = generateIndicatorConfigID(),
 		simID = stock,
 		completedSimulations = {};
 	for (var indID in simulationData[simID]) {
@@ -361,6 +355,7 @@ function simulationAnalyze() {
 		}),
 		contentType: "application/json",
 		success: function(returnData){
+			var indicatorConfigID = generateIndicatorConfigID(returnData['indicators']);
 			if (!simulationData.hasOwnProperty(stock)) {
 				simulationData[simID] = {};
 			}
@@ -462,15 +457,6 @@ function renderChart(allData) {
 	chartIndicators.options.scales.xAxes[0].time.unit = timeUnit;
 	chartIndicators.data.datasets = indicatorDataSets;
 	chartIndicators.update();
-}
-
-function renderTransactions(transactions) {
-	console.log(transactions);
-	$('#transactions').html('');
-	transactions.forEach(function (item, index) {
-		var html = '<tr><td>'+item['date']+'</td><td>'+item['move']+'</td><td>'+item['stock']+'</td><td>'+item['quantity']+'</td><td>'+item['price']+'</td></tr>';
-		$('#transactions').append(html);
-	});
 }
 
 
