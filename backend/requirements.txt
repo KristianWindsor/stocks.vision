@@ -4,3 +4,4 @@ pymysql
 flask-cors
 python-dateutil
 gunicorn
+celery
