@@ -25,6 +25,9 @@ spec:
               value: https://backend.stocks.vision
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              cpu: "0m"
 #              
         - name: backend
           image: kristianwindsor/stocksvision-backend
@@ -37,6 +40,9 @@ spec:
               value: http://127.0.0.1:5001
           ports:
             - containerPort: 5000
+          resources:
+            requests:
+              cpu: "20m"
 #              
         - name: mysql
           image: kristianwindsor/stocksvision-mysql
@@ -48,6 +54,9 @@ spec:
           volumeMounts:
            - name: stocksvision-mysql
              mountPath: /var/lib/mysql
+          resources:
+            requests:
+              cpu: "20m"
 #            
         - name: crawler
           image: kristianwindsor/stocksvision-crawler
@@ -73,6 +82,9 @@ spec:
                 secretKeyRef:
                   name: stocksvision-env
                   key: reddit-secret
+          resources:
+            requests:
+              cpu: "15m"
 #    
         - name: crawlscheduler
           image: kristianwindsor/stocksvision-crawlscheduler
@@ -81,6 +93,9 @@ spec:
               value: http://127.0.0.1:5001
             - name: MYSQL_HOSTNAME
               value: localhost
+          resources:
+            requests:
+              cpu: "10m"
 #           
         - name: phpmyadmin
           image: kristianwindsor/stocksvision-phpmyadmin
@@ -90,6 +105,9 @@ spec:
           env:
             - name: PMA_HOST
               value: 127.0.0.1
+          resources:
+            requests:
+              cpu: "5m"
 #
       imagePullSecrets:
         - name: dockerhub
