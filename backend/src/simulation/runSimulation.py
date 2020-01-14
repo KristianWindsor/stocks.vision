@@ -31,8 +31,10 @@ def percentDifference(no1, no2):
 
 def closestDate(givenDate, dateList):
 	returnDate = None
+	givenDate = datetime.date(givenDate)
 	for d in dateList:
-		d = datetime.strptime(d, '%Y-%m-%d')
+		# print(datetime.strptime(givenDate, '%Y-%m-%d'))
+		# print(datetime.strptime(d, '%Y-%m-%d'))
 		if d <= givenDate:
 			if returnDate == None or d > returnDate:
 				returnDate = d
@@ -40,8 +42,8 @@ def closestDate(givenDate, dateList):
 
 
 def getStockPrice(ticker, date):
-	dateString = closestDate(date, stockPrices[ticker]).strftime('%Y-%m-%d')
-	stockPrice = stockPrices[ticker][dateString]
+	theClosestDate = closestDate(date, stockPrices[ticker])
+	stockPrice = stockPrices[ticker][theClosestDate]
 	return float(stockPrice)
 
 
@@ -73,18 +75,23 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 	cursor.execute("SELECT close_price, date FROM stock_data WHERE ticker = '" + stock + "' AND date >= '" + startDate.strftime('%Y-%m-%d') + "' AND date <= '" + endDate.strftime('%Y-%m-%d') + "'")
 	stockPrices[stock] = {}
 	for row in cursor.fetchall():
-		stockPrices[stock][row['date'].strftime('%Y-%m-%d')] = row['close_price']
+		stockPrices[stock][row['date']] = row['close_price']
 
 	# get average indicator value
 	indicatorChartData = {}
 	averageIndicatorValues = {}
+	print('\n\n\n')
 	for i in range(delta.days + 1):
+		print(i)
+		print(startDate)
 		date = (startDate + timedelta(days=i))
-		dateString = date.strftime('%Y-%m-%d')
-		if date.weekday() < 5 and date.strftime(dateString) in stockPrices[stock]:
+		print(date)
+		if date.weekday() < 5 and date in stockPrices[stock]:
+			print(date)
 			indicatorData = getIndicatorValues(stock, indicatorSettings, date, cash)
-			indicatorChartData[dateString] = indicatorData['indicatorChartData']
-			averageIndicatorValues[dateString] = indicatorData['averageIndicatorValue']
+			indicatorChartData[date] = indicatorData['indicatorChartData']
+			averageIndicatorValues[date] = indicatorData['averageIndicatorValue']
+	print('\n\n\n')
 	
 	# run simulation
 	print(averageIndicatorValues)
@@ -97,16 +104,15 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			'shorting': []
 		}
 	
-	for dateString in averageIndicatorValues:
-		date = datetime.strptime(dateString, '%Y-%m-%d')
+	for date in averageIndicatorValues:
 		# print(stockPrices)
-		stockPrice = float(stockPrices[stock][dateString])
+		stockPrice = float(stockPrices[stock][date])
 		fundsAllocated = portfolio['cash'] + (stockPrice * portfolio[stock]['shares'])
 		for shortedPrice in portfolio[stock]['shorting']:
 			fundsAllocated -= stockPrice
 			fundsAllocated += shortedPrice
 		quantityPossible = int(fundsAllocated / stockPrice)
-		quantityShouldHave = int(quantityPossible * averageIndicatorValues[dateString])
+		quantityShouldHave = int(quantityPossible * averageIndicatorValues[date])
 		currentQuantity = portfolio[stock]['shares'] - len(portfolio[stock]['shorting'])
 		quantityToMove = quantityShouldHave - currentQuantity
 		if quantityToMove > 0:
@@ -135,25 +141,26 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 				quantityToMove += 1
 		print(portfolio)
 		#
-		results['chartData'][date.strftime('%Y-%m-%d')] =  {
+		results['chartData'][date] =  {
 			'portfolioNetWorth': portfolioNetWorth(portfolio, date),
 			'portfolioNetWorthPercent': percentDifference(cash, portfolioNetWorth(portfolio, date)),
 			'stockPrice': stockPrice,
 			'stockPricePercent': stockPrice / startStockPrice * 100 - 100,
 			'stockQuantity': portfolio[stock]['shares'] - len(portfolio[stock]['shorting']),
-			'indicators': indicatorChartData[date.strftime('%Y-%m-%d')]
+			'indicators': indicatorChartData[date]
 		}
 		
 	#
 	firstDate = None
 	lastDate = None
-	for dateString in results['chartData']:
-		date = datetime.strptime(dateString, '%Y-%m-%d')
+	for date in results['chartData']:
 		if firstDate == None or date < firstDate:
 			firstDate = date
 		if lastDate == None or date > lastDate:
 			lastDate = date
-	results['gain'] = results['chartData'][lastDate.strftime('%Y-%m-%d')]['portfolioNetWorthPercent']
+	print(results['chartData'])
+	print(lastDate)
+	results['gain'] = results['chartData'][lastDate]['portfolioNetWorthPercent']
 	
 	print(stockPrices)
 	return results
@@ -166,7 +173,7 @@ def getIndicatorValues(stock, indicatorSettings, date, cash):
 	denominator = 0
 	indicatorChartData = {}
 	for indicatorName in indicatorSettings:
-		indicatorValue = float(getattr(indicators, indicatorName).main(stock, date.strftime('%Y-%m-%d')))
+		indicatorValue = float(getattr(indicators, indicatorName).main(stock, date))
 		weight = indicatorSettings[indicatorName]
 		numerator += indicatorValue * weight
 		denominator += abs(weight)

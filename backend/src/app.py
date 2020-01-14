@@ -7,7 +7,7 @@ import os
 import pymysql
 import json
 import datetime
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 import dateutil.relativedelta
 import requests
 from random import randrange
@@ -79,8 +79,10 @@ def runSimulation():
 	stock = data['stock']
 	cash = 10000.00
 	indicators = data['indicators']
-	endDate = datetime.now()
-	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
+	endDate = datetime.now().date()
+	print('endDate')
+	print(endDate)
+	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length']) # should be date, not datetime
 	# get results
 	results = simulation.RunSimulation.main(stock, indicators, startDate, endDate, cash)
 	# return results
