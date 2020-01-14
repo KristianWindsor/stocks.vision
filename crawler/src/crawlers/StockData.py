@@ -21,8 +21,6 @@ def main(startDate, stockTicker):
 		for majorkey, subdict in theData["Time Series (Daily)"].items():
 			# get values from json
 			open_price = subdict['1. open']
-			high_price = subdict['2. high']
-			low_price = subdict['3. low']
 			close_price = subdict['4. close']
 			volume = subdict['5. volume']
 			date = majorkey
@@ -32,8 +30,10 @@ def main(startDate, stockTicker):
 			).scalar()
 			if not exists:
 				# add the row
-				newStockData = StockData(ticker=stockTicker, open_price=open_price, high_price=high_price, low_price=low_price, close_price=close_price, volume=volume, date=date)
+				newStockData = StockData(ticker=stockTicker, price=price, volume=volume, date=date)
+				newStockData2 = StockData(ticker=stockTicker, price=price, volume=volume, date=date)
 				dbSession.add(newStockData)
+				dbSession.add(newStockData2)
 	else:
 		print('shit. ' + theData)
 

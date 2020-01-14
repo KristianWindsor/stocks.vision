@@ -76,7 +76,7 @@ def main():
 						reddit_id = str(comment.id)
 						user = str(comment.author)
 						karma = int(comment.ups - comment.downs)
-						date = datetime.utcfromtimestamp(comment.created).strftime('%Y-%m-%d')
+						date = datetime.utcfromtimestamp(comment.created)
 						#
 						exists = dbSession.query(
 							dbSession.query(RedditStocksPortfolioComment).filter_by(reddit_id=reddit_id).exists()
