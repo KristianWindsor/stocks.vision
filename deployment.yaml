@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: stocksvision
@@ -6,6 +6,9 @@ metadata:
     app: stocksvision
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: stocksvision
   strategy:
     type: Recreate
   template:
@@ -39,7 +42,7 @@ spec:
             - containerPort: 5000
           resources:
             requests:
-              cpu: "20m"
+              cpu: "5m"
 #              
         - name: mysql
           image: kristianwindsor/stocksvision-mysql
@@ -53,7 +56,7 @@ spec:
              mountPath: /var/lib/mysql
           resources:
             requests:
-              cpu: "20m"
+              cpu: "10m"
 #            
         - name: crawler
           image: kristianwindsor/stocksvision-crawler
@@ -81,7 +84,7 @@ spec:
                   key: reddit-secret
           resources:
             requests:
-              cpu: "15m"
+              cpu: "5m"
 #    
         - name: crawlscheduler
           image: kristianwindsor/stocksvision-crawlscheduler
@@ -92,7 +95,7 @@ spec:
               value: localhost
           resources:
             requests:
-              cpu: "10m"
+              cpu: "2m"
 #
       imagePullSecrets:
         - name: dockerhub
