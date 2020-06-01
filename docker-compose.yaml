@@ -53,3 +53,13 @@ services:
       - CRAWLER_URL=http://crawler:5002
     volumes:
       - ./crawlscheduler/src/:/app/
+#
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=phpmyadmin
+      - PMA_PASSWORD=pass
+    ports:
+      - 8080:80
+    restart: always

@@ -96,6 +96,18 @@ spec:
           resources:
             requests:
               cpu: "2m"
+#           
+        - name: phpmyadmin
+          image: kristianwindsor/stocksvision-phpmyadmin
+          ports:
+            - containerPort: 8080
+              name: phpmyadmin
+          env:
+            - name: PMA_HOST
+              value: 127.0.0.1
+          resources:
+            requests:
+              cpu: "5m"
 #
       imagePullSecrets:
         - name: dockerhub
