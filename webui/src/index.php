@@ -92,7 +92,7 @@
 			</div>
 		</div>
 	</body>
-	<script type="text/javascript" src="jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="jquery-3.5.1.min.js"></script>
 	<script type="text/javascript" src="moment.min.js"></script>
 	<script type="text/javascript" src="Chart.min.js"></script>
 	<script>
