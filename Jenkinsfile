@@ -1,11 +1,7 @@
 node {
-    def backend
-    def crawler
-    def crawlscheduler
-    def mysql
-    def webui
 
-    def buildname = 'b' + env.BUILD_NUMBER
+    buildname = 'b' + env.BUILD_NUMBER
+    currentBuild.displayName = buildname
 
     stage('Get Code') {
         checkout scm
@@ -32,7 +28,7 @@ node {
     }
 
     stage('Push Images') {
-        docker.withRegistry('https://registry.hub.docker.com', 'dockerhub') {
+        docker.withRegistry('', 'dockerhub') {
             backend.push(buildname)
             backend.push("latest")
             crawler.push(buildname)
