@@ -1,7 +1,8 @@
-# Stocks.Vision
-Stock trading bot and information aggregator
+# Stocks Vision
 
-# View it live
+Stock trading bot and information aggregator.
+
+## View it live
 
 This project is currently live at https://stocks.vision
 
@@ -19,10 +20,9 @@ Start the app
 docker-compose up
 ```
 
-View the database: http://localhost:8080/
-
 View the UI: http://localhost/
 
+View the database: http://localhost:8080/
 
 # Microservice architecture
 
@@ -30,17 +30,17 @@ WebUI - visualizes data analyzed by the backend
 
 Backend - analyzes data from the database
 
-MySQL - the database
+DB - the mysql database
 
 Crawler - collects data from external sources and inserts it into the database
 
 CrawlScheduler - triggers the crawler scripts at certain time intervals
 
-# Crawlers
+# Usage: Crawlers
 
 A crawler is a script that collects data from any source on the Internet. Most of these are public APIs, such as [Alpha Vantage](https://www.alphavantage.co/documentation/) or [Reddit](https://www.reddit.com/dev/api/).
 
-Each of these will insert content into the database. You can see the data through phpMyAdmin at https://localhost:8080
+The collected data is inserted into the database. You can view the database through phpMyAdmin at https://localhost:8080
 
 ## List of stocks
 
@@ -72,7 +72,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
 
 ## Reddit /r/stocks
 
-First you need to create a Reddit app (script for personal use): https://www.reddit.com/prefs/apps/
+First you need to [create a Reddit app (script for personal use)](https://www.reddit.com/prefs/apps/).
 
 Second you need to create a `environment.env` file:
 
@@ -92,6 +92,8 @@ curl -X POST -H "Content-Type: application/json" -d '{
 ```
 
 # Contributing
+
+<!-- This project is structured so that it is easy to write new indicators and crawlers. If you want to use a 3rd party API or collect your own data from any website or platform, Stocks Vision has an expansive range of capabilities.  -->
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
