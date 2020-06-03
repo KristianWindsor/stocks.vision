@@ -14,7 +14,7 @@ services:
   backend:
     build: backend
     environment:
-      - MYSQL_HOSTNAME=mysql
+      - MYSQL_HOSTNAME=db
       - CRAWLER_URL=http://crawler:5001
       - USE_GUNICORN=false
     ports:
@@ -23,21 +23,21 @@ services:
       - ./backend/src/:/app/
     restart: always
 #
-  mysql:
-    build: mysql/
+  db:
+    build: db/
     command: --default-authentication-plugin=mysql_native_password
     environment:
       - MYSQL_ROOT_PASSWORD=pass
     ports:
       - 3306:3306
     volumes:
-      - ./mysql/mysql-data:/var/lib/mysql
+      - ./db/mysql-data:/var/lib/mysql
     restart: always
 #
   crawler:
     build: crawler
     environment:
-      - MYSQL_HOSTNAME=mysql
+      - MYSQL_HOSTNAME=db
     ports:
       - 5001:5001
     volumes:
@@ -49,7 +49,7 @@ services:
   crawlscheduler:
     build: crawlscheduler
     environment:
-      - MYSQL_HOSTNAME=mysql
+      - MYSQL_HOSTNAME=db
       - CRAWLER_URL=http://crawler:5002
     volumes:
       - ./crawlscheduler/src/:/app/
@@ -57,7 +57,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     environment:
-      - PMA_HOST=mysql
+      - PMA_HOST=db
       - PMA_USER=phpmyadmin
       - PMA_PASSWORD=pass
     ports:
