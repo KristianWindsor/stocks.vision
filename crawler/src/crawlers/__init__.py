@@ -1,2 +1,2 @@
-__all__ = ['RedditWallstreetbetsSentiment', 'RedditStocksPortfolio', 'Stocks', 'StockData']
+__all__ = ['RedditStocksPortfolio', 'Stocks', 'StockData']
 from . import *
