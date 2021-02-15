@@ -32,13 +32,6 @@ spec:
         backend:
           serviceName: stocksvision
           servicePort: 5001
-  - host: phpmyadmin.stocks.vision
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: stocksvision
-          servicePort: 8080
   tls:
   - secretName: stocksvision-cert
     hosts:

@@ -38,7 +38,7 @@ CrawlScheduler - triggers the crawler scripts at certain time intervals
 
 A crawler is a script that collects data from any source on the Internet. Most of these are public APIs, such as [Alpha Vantage](https://www.alphavantage.co/documentation/) or [Reddit](https://www.reddit.com/dev/api/).
 
-The collected data is inserted into the database. You can view the database through phpMyAdmin at https://localhost:8080
+The collected data is inserted into the database. You can view the database with any database client.
 
 ## List of stocks
 

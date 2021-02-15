@@ -21,8 +21,8 @@ CREATE USER crawlscheduler IDENTIFIED WITH mysql_native_password BY 'pass';
 GRANT ALL PRIVILEGES ON stocksvision.* TO 'crawlscheduler'@'%' WITH GRANT OPTION;
 
 --
--- User: phpmyadmin
+-- User: admin
 --
 
-CREATE USER phpmyadmin IDENTIFIED WITH mysql_native_password BY 'pass';
-GRANT ALL PRIVILEGES ON stocksvision.* TO 'phpmyadmin'@'%' WITH GRANT OPTION;
+CREATE USER admin IDENTIFIED WITH mysql_native_password BY 'pass';
+GRANT ALL PRIVILEGES ON stocksvision.* TO 'admin'@'%' WITH GRANT OPTION;
