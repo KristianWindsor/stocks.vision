@@ -1,10 +1,8 @@
 # Stocks Vision
 
-Stock trading bot and information aggregator.
+Stocks Vision is a stock trading bot and information aggregator.
 
-## View it live
-
-This project is currently live at https://stocks.vision
+This project is currently live at [https://stocks.vision](https://stocks.vision/).
 
 # Run this locally
 You will need [docker desktop](https://www.docker.com/products/docker-desktop) installed.
@@ -90,6 +88,44 @@ curl -X POST -H "Content-Type: application/json" -d '{
     "token": "hello"
 }' http://localhost:5001/runScript
 ```
+
+## Create your own Crawler Script
+
+A crawler is just a python script that scrapes data from somewhere and stores it into the database. 
+
+To create your own and add it to stocks vision, do the following
+
+1. To create a new table in the database, add it to `./crawlers/database.py` where the database is defined using SQLAlchemy.
+
+2. Create a python script at `./crawler/src/crawlers/myscript.py`.
+
+3. Schedule it at regular intervals by triggering it in `./crawlscheduler/src/app.py` with this script
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{
+    "crawlerName": "MyCrawler",
+    "token": "hello"
+}' http://localhost:5001/runScript
+```
+
+# Usage: Indicators
+
+<!-- A is a script that collects data from any source on the Internet. Most of these are public APIs, such as [Alpha Vantage](https://www.alphavantage.co/documentation/) or [Reddit](https://www.reddit.com/dev/api/).
+
+The collected data is inserted into the database. You can view the database through phpMyAdmin at https://localhost:8080
+
+## List of stocks
+
+Populate the database with a complete list of stock tickers and the names of the companies.
+
+Trigger the crawl script:
+
+```bash
+curl -X POST -H "Content-Type: application/json" -d '{
+    "crawlerName": "Stocks",
+    "token": "hello"
+}' http://localhost:5001/runScript
+``` -->
+
 
 # Contributing
 
