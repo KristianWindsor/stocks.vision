@@ -19,8 +19,8 @@ node {
         crawlscheduler = docker.build("kristianwindsor/stocksvision-crawlscheduler", "./crawlscheduler/")
     }
 
-    stage('Build MySQL') {
-        mysql = docker.build("kristianwindsor/stocksvision-mysql", "./mysql/")
+    stage('Build Database') {
+        db = docker.build("kristianwindsor/stocksvision-db", "./db/")
     }
 
     stage('Build WebUI') {
@@ -35,8 +35,8 @@ node {
             crawler.push("latest")
             crawlscheduler.push(buildname)
             crawlscheduler.push("latest")
-            mysql.push(buildname)
-            mysql.push("latest")
+            db.push(buildname)
+            db.push("latest")
             webui.push(buildname)
             webui.push("latest")
         }
@@ -46,7 +46,7 @@ node {
             sed -i "s/kristianwindsor\\/stocksvision-backend.*/kristianwindsor\\/stocksvision-backend:$buildname/" deployment.yaml
             sed -i "s/kristianwindsor\\/stocksvision-crawler.*/kristianwindsor\\/stocksvision-crawler:$buildname/" deployment.yaml
             sed -i "s/kristianwindsor\\/stocksvision-crawlscheduler.*/kristianwindsor\\/stocksvision-crawlscheduler:$buildname/" deployment.yaml
-            sed -i "s/kristianwindsor\\/stocksvision-mysql.*/kristianwindsor\\/stocksvision-mysql:$buildname/" deployment.yaml
+            sed -i "s/kristianwindsor\\/stocksvision-db.*/kristianwindsor\\/stocksvision-db:$buildname/" deployment.yaml
             sed -i "s/kristianwindsor\\/stocksvision-webui.*/kristianwindsor\\/stocksvision-webui:$buildname/" deployment.yaml
             cat deployment.yaml
             kubectl apply -f deployment.yaml
