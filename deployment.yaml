@@ -27,7 +27,11 @@ spec:
             - containerPort: 80
           resources:
             requests:
-              cpu: "0m"
+              memory: "20Mi"
+              cpu: "10m"
+            limits:
+              memory: "40Mi"
+              cpu: "20m"
 #              
         - name: backend
           image: kristianwindsor/stocksvision-backend
@@ -42,7 +46,11 @@ spec:
             - containerPort: 5000
           resources:
             requests:
-              cpu: "5m"
+              memory: "160Mi"
+              cpu: "80m"
+            limits:
+              memory: "320Mi"
+              cpu: "160m"
 #              
         - name: db
           image: kristianwindsor/stocksvision-db
@@ -56,7 +64,11 @@ spec:
              mountPath: /var/lib/mysql
           resources:
             requests:
-              cpu: "10m"
+              memory: "320Mi"
+              cpu: "160m"
+            limits:
+              memory: "640Mi"
+              cpu: "320m"
 #            
         - name: crawler
           image: kristianwindsor/stocksvision-crawler
@@ -84,7 +96,11 @@ spec:
                   key: reddit-secret
           resources:
             requests:
-              cpu: "5m"
+              memory: "160Mi"
+              cpu: "80m"
+            limits:
+              memory: "320Mi"
+              cpu: "160m"
 #    
         - name: crawlscheduler
           image: kristianwindsor/stocksvision-crawlscheduler
@@ -95,7 +111,11 @@ spec:
               value: localhost
           resources:
             requests:
-              cpu: "2m"
+              memory: "80Mi"
+              cpu: "40m"
+            limits:
+              memory: "160Mi"
+              cpu: "80m"
 #
       imagePullSecrets:
         - name: dockerhub
