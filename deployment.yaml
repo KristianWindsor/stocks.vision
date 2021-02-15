@@ -46,11 +46,11 @@ spec:
             - containerPort: 5000
           resources:
             requests:
+              memory: "80Mi"
+              cpu: "40m"
+            limits:
               memory: "160Mi"
               cpu: "80m"
-            limits:
-              memory: "320Mi"
-              cpu: "160m"
 #              
         - name: db
           image: kristianwindsor/stocksvision-db
@@ -96,11 +96,11 @@ spec:
                   key: reddit-secret
           resources:
             requests:
+              memory: "80Mi"
+              cpu: "40m"
+            limits:
               memory: "160Mi"
               cpu: "80m"
-            limits:
-              memory: "320Mi"
-              cpu: "160m"
 #    
         - name: crawlscheduler
           image: kristianwindsor/stocksvision-crawlscheduler
@@ -111,11 +111,11 @@ spec:
               value: localhost
           resources:
             requests:
+              memory: "40Mi"
+              cpu: "20m"
+            limits:
               memory: "80Mi"
               cpu: "40m"
-            limits:
-              memory: "160Mi"
-              cpu: "80m"
 #
       imagePullSecrets:
         - name: dockerhub
