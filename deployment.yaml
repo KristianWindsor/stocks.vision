@@ -37,7 +37,7 @@ spec:
           image: kristianwindsor/stocksvision-backend
           env:
             - name: USE_GUNICORN
-              value: 'true'
+              value: 'false'
             - name: MYSQL_HOSTNAME
               value: localhost
             - name: CRAWLER_URL
