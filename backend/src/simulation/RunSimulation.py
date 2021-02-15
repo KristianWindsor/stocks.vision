@@ -40,9 +40,15 @@ def closestDate(givenDate, dateList):
 
 
 def getStockPrice(ticker, date):
-	dateString = closestDate(date, stockPrices[ticker]).strftime('%Y-%m-%d')
-	stockPrice = stockPrices[ticker][dateString]
-	return float(stockPrice)
+	try:
+		# get the date we're looking for in the format we want
+		dateString = closestDate(date, stockPrices[ticker]).strftime('%Y-%m-%d')
+		# now get the stock price using the date as the key
+		stockPrice = stockPrices[ticker][dateString]
+		# return the price as a decimal number
+		return float(stockPrice)
+	except:
+		return None
 
 
 def main(stock, indicatorSettings, startDate, endDate, cash):
@@ -70,7 +76,8 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 	delta = endDate - startDate
 
 	# get stock prices
-	cursor.execute("SELECT close_price, date FROM stock_data WHERE ticker = '" + stock + "' AND date >= '" + startDate.strftime('%Y-%m-%d') + "' AND date <= '" + endDate.strftime('%Y-%m-%d') + "'")
+	getDataStartDate = startDate - timedelta(days=7)
+	cursor.execute("SELECT close_price, date FROM stock_data WHERE ticker = '" + stock + "' AND date >= '" + getDataStartDate.strftime('%Y-%m-%d') + "' AND date <= '" + endDate.strftime('%Y-%m-%d') + "'")
 	stockPrices[stock] = {}
 	for row in cursor.fetchall():
 		stockPrices[stock][row['date'].strftime('%Y-%m-%d')] = row['close_price']
@@ -154,8 +161,6 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 		if lastDate == None or date > lastDate:
 			lastDate = date
 	results['gain'] = results['chartData'][lastDate.strftime('%Y-%m-%d')]['portfolioNetWorthPercent']
-	
-	print(stockPrices)
 	return results
 
 
