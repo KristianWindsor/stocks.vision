@@ -102,20 +102,20 @@ spec:
               memory: "160Mi"
               cpu: "80m"
 #    
-        - name: crawlscheduler
-          image: kristianwindsor/stocksvision-crawlscheduler
-          env:
-            - name: CRAWLER_URL
-              value: http://127.0.0.1:5001
-            - name: MYSQL_HOSTNAME
-              value: localhost
-          resources:
-            requests:
-              memory: "20Mi"
-              cpu: "10m"
-            limits:
-              memory: "40Mi"
-              cpu: "20m"
+        # - name: crawlscheduler
+        #   image: kristianwindsor/stocksvision-crawlscheduler
+        #   env:
+        #     - name: CRAWLER_URL
+        #       value: http://127.0.0.1:5001
+        #     - name: MYSQL_HOSTNAME
+        #       value: localhost
+        #   resources:
+        #     requests:
+        #       memory: "20Mi"
+        #       cpu: "10m"
+        #     limits:
+        #       memory: "40Mi"
+        #       cpu: "20m"
 #
       imagePullSecrets:
         - name: dockerhub
