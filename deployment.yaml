@@ -111,11 +111,11 @@ spec:
               value: localhost
           resources:
             requests:
+              memory: "20Mi"
+              cpu: "10m"
+            limits:
               memory: "40Mi"
               cpu: "20m"
-            limits:
-              memory: "80Mi"
-              cpu: "40m"
 #
       imagePullSecrets:
         - name: dockerhub
