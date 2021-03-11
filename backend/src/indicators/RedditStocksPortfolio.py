@@ -18,17 +18,6 @@ def main(stock, date):
 		autocommit=True
 	)
 	cursor = db.cursor(pymysql.cursors.DictCursor)
-	# # crawler
-	# rowCount = cursor.execute("SELECT id FROM reddit_stocks_portfolio_value LIMIT 1")
-	# if rowCount == 0:
-	# 	url = os.environ['CRAWLER_URL'] + '/runScript'
-	# 	data = json.dumps({
-	# 		"crawlerName": "RedditStocksPortfolio",
-	# 		"token": "hello"
-	# 	})
-	# 	headers = { "Content-Type":"application/json" }
-	# 	res = requests.post(url, data=data, headers=headers)
-	# 	print(res.text)
 	# get average portfolio
 	startDate = datetime.strptime(date, "%Y-%m-%d")
 	startDate = startDate - dateutil.relativedelta.relativedelta(months=1)

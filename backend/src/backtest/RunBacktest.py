@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import os
+import os, json, requests
 import pymysql
 from datetime import datetime, date, timedelta
 import indicators
@@ -74,6 +74,21 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 	print(cash)
 
 	delta = endDate - startDate
+
+	# make sure enough data exists
+	rowCount = cursor.execute("SELECT id FROM stock_data WHERE ticker = '" + stock + "' AND date <= '" + startDate.strftime('%Y-%m-%d') + "' LIMIT 1")
+	if rowCount == 0:
+		print("Not enough stock data to run backtest. Calling Crawler to fetch more data.")
+		url = os.environ['CRAWLER_URL'] + '/runScript'
+		data = json.dumps({
+			"crawlerName": "StockData",
+			"startDate": "2019-01-15",
+			"stockTicker": stock,
+			"token": "hello"
+		})
+		headers = { "Content-Type":"application/json" }
+		res = requests.post(url, data=data, headers=headers)
+		print(res.text)
 
 	# get stock prices
 	getDataStartDate = startDate - timedelta(days=7)
