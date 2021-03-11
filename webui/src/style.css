@@ -19,9 +19,9 @@ input, button {
 	padding: 3% 6%;
 	vertical-align: top;
 }
-.fourth.indicators, .fourth.simulations {
+.fourth.indicators, .fourth.backtests {
 	width: 100%;
-}.fourth.simulations {
+}.fourth.backtests {
 	min-height: 61.8vh;
 }
 @media (max-width: 700px) {
@@ -86,16 +86,16 @@ td {
 .timepicker {
 	padding-bottom: 30px;
 }
-.simulations .timepicker td {
+.backtests .timepicker td {
 	padding: 0;
 }
-.simulations .timepicker a {
+.backtests .timepicker a {
 	display: inline-block;
 	width: 100%;
 	text-decoration: none;
 	border: 1px solid #ccc;
 }
-.simulations .timepicker a:hover, .timepicker .picked {
+.backtests .timepicker a:hover, .timepicker .picked {
 	background-color: #333;
 	color: #fff;
 }

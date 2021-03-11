@@ -21,7 +21,7 @@ text_file = open("indicators/__init__.py", "w")
 text_file.write('__all__ = ' + str(__all__) + '\nfrom . import *')
 text_file.close()
 import indicators
-import simulation
+import backtest
 
 
 app = Flask(__name__)
@@ -70,11 +70,11 @@ def indicator():
 
 
 #
-# simulation
+# backtest
 #
-@app.route('/simulation', methods=["POST"])
+@app.route('/backtest', methods=["POST"])
 @cross_origin()
-def runSimulation():
+def runBacktest():
 	data = request.get_json()
 	stock = data['stock']
 	cash = 10000.00
@@ -82,7 +82,7 @@ def runSimulation():
 	endDate = datetime.now()
 	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
 	# get results
-	results = simulation.RunSimulation.main(stock, indicators, startDate, endDate, cash)
+	results = backtest.RunBacktest.main(stock, indicators, startDate, endDate, cash)
 	# return results
 	return results
 

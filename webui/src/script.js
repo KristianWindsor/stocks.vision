@@ -7,7 +7,7 @@ var settings = {
 		ticker: 'AAPL',
 		price: 178.97
 	},
-	simulation: {
+	backtest: {
 		length: 4
 	},
 	indicators: { /*
@@ -19,10 +19,10 @@ var settings = {
 	},
 	spendableCash: '$1000'
 };
-var simulationData = { /*
+var backtestData = { /*
 	stockID: {
 		indicatorConfigID: {
-			simulationDuration: data
+			backtestDuration: data
 		}
 	} */
 };
@@ -43,7 +43,7 @@ today = yyyy + '-' + mm + '-' + dd;
 function initializeHTML() {
 	$('#stock').val(settings.stock.ticker);
 	$('#spendableCash').val(settings.spendableCash);
-	$('.tp' + settings.simulation.length.toString()).addClass('picked');
+	$('.tp' + settings.backtest.length.toString()).addClass('picked');
 	GETindicator(settings.stock.ticker, '*');
 	$.ajax({
 		type: 'GET',
@@ -60,11 +60,11 @@ function initializeHTML() {
 		} else {
 			tickLabel = '%'
 		}
-		if (settings.simulation.length < 6) {
+		if (settings.backtest.length < 6) {
 			timeUnit = 'day';
-		} else if (settings.simulation.length < 52) {
+		} else if (settings.backtest.length < 52) {
 			timeUnit = 'week';
-		} else if (settings.simulation.length >= 52) {
+		} else if (settings.backtest.length >= 52) {
 			timeUnit = 'month';
 		}
 		return {
@@ -183,7 +183,7 @@ function indicatorWeightChanged(indicatorName) {
 	// update values
 	settings.indicators[indicatorName].weight = trackbarValue;
 	$('.' + indicatorName + ' .trackbarValue').html(trackbarValue);
-	simulation();
+	backtest();
 	doMath();
 }
 function indicatorEnabledChanged(indicatorName) {
@@ -192,7 +192,7 @@ function indicatorEnabledChanged(indicatorName) {
 		settings.indicators[indicatorName].isEnabled = true;
 	} else {
 		settings.indicators[indicatorName].isEnabled = false;
-		simulation();
+		backtest();
 	}
 	doMath();
 }
@@ -247,8 +247,8 @@ function GETindicator(stock, indicator) {
 			});
 			// update math
 			doMath();
-			// update simulation
-			simulation();
+			// update backtest
+			backtest();
 		}
 	});
 }
@@ -280,25 +280,25 @@ function getIndicatorSettings() {
 }
 
 
-function simulation() {
+function backtest() {
 	var stock = settings.stock.ticker,
-		length = settings.simulation.length,
+		length = settings.backtest.length,
 		indicatorSettings = getIndicatorSettings(),
 		indicatorConfigID = generateIndicatorConfigID(indicatorSettings);
 
-	if (!simulationData.hasOwnProperty(stock)) {
-		simulationData[stock] = {};
+	if (!backtestData.hasOwnProperty(stock)) {
+		backtestData[stock] = {};
 	}
-	if (!simulationData[stock].hasOwnProperty(indicatorConfigID)) {
-		simulationData[stock][indicatorConfigID] = {};
+	if (!backtestData[stock].hasOwnProperty(indicatorConfigID)) {
+		backtestData[stock][indicatorConfigID] = {};
 	}
-	if (!simulationData[stock][indicatorConfigID].hasOwnProperty(length)) {
-		simulationData[stock][indicatorConfigID][length] = {};
+	if (!backtestData[stock][indicatorConfigID].hasOwnProperty(length)) {
+		backtestData[stock][indicatorConfigID][length] = {};
 	}
-	if (Object.entries(simulationData[stock][indicatorConfigID][length]).length === 0) {
+	if (Object.entries(backtestData[stock][indicatorConfigID][length]).length === 0) {
 		$.ajax({
 			type: 'POST',
-			url: API_URL + '/simulation',
+			url: API_URL + '/backtest',
 			data: JSON.stringify({ 
 				'stock': stock,
 				'length': length, 
@@ -306,20 +306,20 @@ function simulation() {
 			}),
 			contentType: "application/json",
 			success: function(returnData){
-				simulationData[stock][indicatorConfigID][length] = returnData;
+				backtestData[stock][indicatorConfigID][length] = returnData;
 				renderChart(returnData);
 			}
 		});
 	} else {
-		renderChart(simulationData[stock][indicatorConfigID][length]);
+		renderChart(backtestData[stock][indicatorConfigID][length]);
 	}
 }
 
-function setSimulationLength(length) {
-	settings.simulation.length = length;
+function setBacktestLength(length) {
+	settings.backtest.length = length;
 	$('.timepicker a').removeClass('picked');
 	$('.tp' + length.toString()).addClass('picked');
-	simulation();
+	backtest();
 }
 
 function randomNum(min,max) {
@@ -371,11 +371,11 @@ function renderChart(allData) {
 			});
 		}
 	}
-	if (settings.simulation.length < 6) {
+	if (settings.backtest.length < 6) {
 		timeUnit = 'day';
-	} else if (settings.simulation.length < 52) {
+	} else if (settings.backtest.length < 52) {
 		timeUnit = 'week';
-	} else if (settings.simulation.length >= 52) {
+	} else if (settings.backtest.length >= 52) {
 		timeUnit = 'month';
 	}
 
@@ -400,12 +400,12 @@ initializeHTML();
 
 $('#stock').on('input', function() {
 	// if ($(this).val().length > 0) {
-	// 	simulation();
+	// 	backtest();
 	// }
 });
 $('#holdDuration').on('input', function() {
 	if ($(this).val().length > 0) {
-		simulation();
+		backtest();
 	}
 });
 $('#spendableCash').on('input', function() {

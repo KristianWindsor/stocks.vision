@@ -42,35 +42,35 @@
 	 --><div class="fourth indicators">
 			<h2>Indicators</h2>
 		</div><!--
-	 --><div class="fourth simulations">
+	 --><div class="fourth backtests">
 			<div>
-				<h2>Simulation</h2>
+				<h2>Backtest</h2>
 				<p>
-					Length of simulation in weeks:
+					Length of backtest in weeks:
 				</p>
 				<table>
 					<tbody>
 						<tr class="timepicker">
 							<td>
-								<a onclick="setSimulationLength(1)" class="tp1">1 Week</a>
+								<a onclick="setBacktestLength(1)" class="tp1">1 Week</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(2)" class="tp2">2 Weeks</a>
+								<a onclick="setBacktestLength(2)" class="tp2">2 Weeks</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(4)" class="tp4">1 Month</a>
+								<a onclick="setBacktestLength(4)" class="tp4">1 Month</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(13)" class="tp13">3 Months</a>
+								<a onclick="setBacktestLength(13)" class="tp13">3 Months</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(26)" class="tp26">6 Months</a>
+								<a onclick="setBacktestLength(26)" class="tp26">6 Months</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(52)" class="tp52">1 Year</a>
+								<a onclick="setBacktestLength(52)" class="tp52">1 Year</a>
 							</td>
 							<td>
-								<a onclick="setSimulationLength(104)" class="tp104">2 Years</a>
+								<a onclick="setBacktestLength(104)" class="tp104">2 Years</a>
 							</td>
 						</tr>
 					</tbody>

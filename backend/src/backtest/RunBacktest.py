@@ -93,7 +93,7 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			indicatorChartData[dateString] = indicatorData['indicatorChartData']
 			averageIndicatorValues[dateString] = indicatorData['averageIndicatorValue']
 	
-	# run simulation
+	# run backtest
 	print(averageIndicatorValues)
 	print(indicatorChartData)
 	startStockPrice = getStockPrice(stock, startDate)
