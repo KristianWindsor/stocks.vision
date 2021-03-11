@@ -1,7 +1,5 @@
 #!/usr/bin/python
-from flask import Flask
-from flask import jsonify
-from flask import request
+from flask import Flask, jsonify, request
 
 # write each module name in __init__.py so they can import successfully
 from os.path import dirname, basename, isfile, join
@@ -19,8 +17,8 @@ f.write(initFileContent)
 f.close()
 import crawlers
 
+
 app = Flask(__name__)
-app.config['CORS_HEADERS'] = 'Content-type: application/json'
 
 
 #
@@ -29,6 +27,8 @@ app.config['CORS_HEADERS'] = 'Content-type: application/json'
 @app.route('/', methods=["GET"])
 def index():
 	return '200. ready to rock and roll.'
+
+
 #
 # Run Script
 #
@@ -51,8 +51,6 @@ def runScript():
 		output = getattr(crawlers, crawlerName).main()
 	# return
 	return '200. ' + crawlerName + ' success.'
-
-
 
 
 if __name__ == '__main__':

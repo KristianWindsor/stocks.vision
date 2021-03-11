@@ -1,9 +1,5 @@
 #!/usr/bin/python
-import requests
-import json
-import time
-import os
-import pymysql
+import requests, json, time, os, pymysql
 
 # connect to mysql
 for i in range(100):

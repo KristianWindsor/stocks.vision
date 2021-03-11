@@ -1,15 +1,9 @@
 #!/usr/bin/python
-from flask import Flask
-from flask import jsonify
-from flask import request
+from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-import os
-import pymysql
-import json
-import datetime
+import os, pymysql, json, datetime, requests
 from datetime import datetime, timedelta
 import dateutil.relativedelta
-import requests
 from random import randrange
 
 # write each module name in __init__.py so they can import successfully
@@ -26,9 +20,6 @@ import backtest
 
 app = Flask(__name__)
 CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
-
-
 
 
 #
