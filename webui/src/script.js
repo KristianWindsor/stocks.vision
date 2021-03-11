@@ -236,7 +236,7 @@ function GETindicator(stock, indicator) {
 						<div class="`+indicatorName+`">
 							<input type="checkbox" onchange="indicatorEnabledChanged('`+indicatorName+`')" `+checkboxMaybeChecked+` /><br>
 							`+indicatorName+`
-							<input id="`+indicatorName+`" type="range" min="-10" max="10" value="`+settings.indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" />
+							<input id="`+indicatorName+`" type="range" min="-5" max="5" value="`+settings.indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" />
 							<span class="indicatorValue">`+(Math.round(returnData[indicatorName] * 10) / 10)+`%</span> * <span class="trackbarValue">`+settings.indicators[indicatorName].weight+`</span>
 						</div>
 					`;
