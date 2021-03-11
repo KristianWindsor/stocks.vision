@@ -17,8 +17,7 @@ var settings = {
 			weight: 5 
 		}*/
 	},
-	spendableCash: '$1000',
-	isAnalyzing: false
+	spendableCash: '$1000'
 };
 var simulationData = { /*
 	stockID: {
@@ -132,16 +131,6 @@ function initializeHTML() {
 		},
 		options: chartOptions('indicators')
 	});
-}
-
-function startAnalyzing() {
-	$('.fourth.indicators input[type="range"]').prop('disabled', true);
-	simulationAnalyze();
-	$('#simulationButton').html('Stop Simulations');
-}
-function stopAnalyzing() {
-	$('.fourth.indicators input[type="range"]').prop('disabled', false);
-	$('#simulationButton').html('Run Simulations');
 }
 
 
@@ -326,61 +315,6 @@ function simulation() {
 	}
 }
 
-
-function simulationAnalyze() {
-	// please run simulationAnalyze
-	// here are the past results
-	// > here is a simulation that did better than yours
-	// cool, now do it again
-	// let me display this new simulation
-	var stock = settings.stock.ticker,
-		length = settings.simulation.length,
-		indicatorSettings = getIndicatorSettings(),
-		simID = stock,
-		completedSimulations = {};
-	for (var indID in simulationData[simID]) {
-		if (simulationData[simID].hasOwnProperty(indID)) {
-			completedSimulations[indID] = simulationData[simID][indID][length]['gain'];
-		}
-	}
-
-	$.ajax({
-		type: 'POST',
-		url: API_URL + '/simulationAnalyze',
-		data: JSON.stringify({ 
-			'stock': stock,
-			'length': length, 
-			'indicators': indicatorSettings,
-			'completedSimulations': completedSimulations
-		}),
-		contentType: "application/json",
-		success: function(returnData){
-			var indicatorConfigID = generateIndicatorConfigID(returnData['indicators']);
-			if (!simulationData.hasOwnProperty(stock)) {
-				simulationData[simID] = {};
-			}
-			if (!simulationData[simID].hasOwnProperty(indicatorConfigID)) {
-				simulationData[simID][indicatorConfigID] = {};
-			}
-			if (!simulationData[simID][indicatorConfigID].hasOwnProperty(length)) {
-				simulationData[simID][indicatorConfigID][length] = {};
-			}
-			simulationData[stock][indicatorConfigID][length] = returnData;
-			if (settings.isAnalyzing) {
-				renderChart(returnData);
-				for (var indicatorName in returnData['indicators']) {
-					if (returnData['indicators'].hasOwnProperty(indicatorName)) {
-						$('#' + indicatorName).val(returnData['indicators'][indicatorName]);
-						$('.' + indicatorName + ' .trackbarValue').html(returnData['indicators'][indicatorName]);
-					}
-				}
-				doMath();
-				simulationAnalyze();
-			}
-		}
-	});
-}
-
 function setSimulationLength(length) {
 	settings.simulation.length = length;
 	$('.timepicker a').removeClass('picked');
@@ -477,14 +411,5 @@ $('#holdDuration').on('input', function() {
 $('#spendableCash').on('input', function() {
 	if ($(this).val().length > 0) {
 		doMath();
-	}
-});
-$("#simulationButton").click(function() {
-	if (settings.isAnalyzing == true) {
-		settings.isAnalyzing = false;
-		stopAnalyzing();
-	} else {
-		settings.isAnalyzing = true;
-		startAnalyzing();
 	}
 });

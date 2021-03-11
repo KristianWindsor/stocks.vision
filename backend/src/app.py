@@ -88,49 +88,6 @@ def runSimulation():
 
 
 #
-# simulation analyze
-#
-@app.route('/simulationAnalyze', methods=["POST"])
-@cross_origin()
-def simulationAnalyze():
-	# > here are the completed simulations
-	# > please give me one that's better
-	data = request.get_json()
-	stock = data['stock']
-	completedSimulations = data['completedSimulations']
-	indicators = data['indicators']
-	cash = 10000.00
-	endDate = datetime.now()
-	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
-	# run simulation 
-	# if not better, run again
-	# return data
-	currentHighestGain = 0
-	for cs in completedSimulations:
-		if completedSimulations[cs] > currentHighestGain:
-			currentHighestGain = completedSimulations[cs]
-	returnData = {
-		'gain': 0
-	}
-	cnt = 0
-	while returnData['gain'] <= currentHighestGain and cnt < 100:
-		# decide indicator settings
-		indicatorConfigID = None
-		while indicatorConfigID in completedSimulations or indicatorConfigID is None:
-			indicatorConfigID = ''
-			newIndicators = {}
-			for indicatorName in indicators:
-				newVal = randrange(-10,10)
-				if newVal != 0:
-					newIndicators[indicatorName] = newVal
-					indicatorConfigID += indicatorName
-					if len(newIndicators) != 1:
-						indicatorConfigID += str(newIndicators[indicatorName])
-		returnData = simulation.RunSimulation.main(stock, newIndicators, startDate, endDate, cash)
-		cnt += 1
-	return returnData
-
-#
 # stock ticker list
 #
 @app.route('/tickerlist', methods=["GET"])
