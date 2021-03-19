@@ -107,7 +107,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
 }' http://localhost:5001/runScript
 ```
 
-# Usage: Indicators
+# Usage: Strategies
 
 <!-- A is a script that collects data from any source on the Internet. Most of these are public APIs, such as [Alpha Vantage](https://www.alphavantage.co/documentation/) or [Reddit](https://www.reddit.com/dev/api/).
 
@@ -129,7 +129,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
 
 # Contributing
 
-<!-- This project is structured so that it is easy to write new indicators and crawlers. If you want to use a 3rd party API or collect your own data from any website or platform, Stocks Vision has an expansive range of capabilities.  -->
+<!-- This project is structured so that it is easy to write new strategies and crawlers. If you want to use a 3rd party API or collect your own data from any website or platform, Stocks Vision has an expansive range of capabilities.  -->
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 

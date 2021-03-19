@@ -24,12 +24,12 @@
 			<div>
 				<h2>Results</h2>
 				<p>
-					Indicator Value (Averaged)<br>
-					<span id="averageIndicatorValue" class="result"></span>
+					Strategy Value (Averaged)<br>
+					<span id="averageStrategyValue" class="result"></span>
 				</p>
 				<p>
 					Cash to Spend<br>
-					<input id="spendableCash" type="text" value="" onchange="checkForIndicatorUpdate()" />
+					<input id="spendableCash" type="text" value="" onchange="checkForStrategyUpdate()" />
 					<br>
 					<span id="cashToSpend" class="result"></span>
 				</p>
@@ -39,8 +39,8 @@
 				</p>
 			</div>
 		</div><!--
-	 --><div class="fourth indicators">
-			<h2>Indicators</h2>
+	 --><div class="fourth strategies">
+			<h2>Strategies</h2>
 		</div><!--
 	 --><div class="fourth backtests">
 			<div>
@@ -78,7 +78,7 @@
 				<div class="chart-wrap">
 					<canvas id="chartPrices" width="400" height="400"></canvas>
 					<canvas id="chartHoldings" width="400" height="400"></canvas>
-					<canvas id="chartIndicators" width="400" height="400"></canvas>
+					<canvas id="chartStrategies" width="400" height="400"></canvas>
 				</div>
 				<div class="transactions">
 					<table>

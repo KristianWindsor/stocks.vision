@@ -9,12 +9,12 @@ from random import randrange
 # write each module name in __init__.py so they can import successfully
 from os.path import dirname, basename, isfile, join
 import glob
-modules = glob.glob(join(dirname(__file__), "indicators/*.py"))
+modules = glob.glob(join(dirname(__file__), "strategies/*.py"))
 __all__ = [ basename(f)[:-3] for f in modules if isfile(f) and not f.endswith('__init__.py')]
-text_file = open("indicators/__init__.py", "w")
+text_file = open("strategies/__init__.py", "w")
 text_file.write('__all__ = ' + str(__all__) + '\nfrom . import *')
 text_file.close()
-import indicators
+import strategies
 import backtest
 
 
@@ -31,32 +31,32 @@ def index():
 
 
 #
-# indicator
+# strategy
 #
-@app.route('/indicator', methods=["POST"])
+@app.route('/strategy', methods=["POST"])
 @cross_origin()
-def indicator():
+def strategy():
 	data = request.get_json()
-	indicator = data['indicator']
+	strategy = data['strategy']
 	stock = data['stock']
 	date = data['date']
-	# run indicator py script with given stock
+	# run strategy py script with given stock
 	results = {}
-	if isinstance(indicator, (list,)):
+	if isinstance(strategy, (list,)):
 		print('this is a list')
-	elif indicator == '*':
-		print('star. return all indicator values')
-		indicatorNameList = []
-		for root, dirs, files in os.walk(r'indicators/'):
+	elif strategy == '*':
+		print('star. return all strategy values')
+		strategyNameList = []
+		for root, dirs, files in os.walk(r'strategies/'):
 			for file in files:
 				if file.endswith('.py') and '__init__' not in file:
-					indicatorNameList.append(file.replace('.py', ''))
-		for indicatorName in indicatorNameList:
-			results[indicatorName] = getattr(indicators, indicatorName).main(stock, date)
+					strategyNameList.append(file.replace('.py', ''))
+		for strategyName in strategyNameList:
+			results[strategyName] = getattr(strategies, strategyName).main(stock, date)
 		print(results)
 	else:
-		print('this is a single indicator')
-		results[indicator] = getattr(indicators, indicator).main(stock, date)
+		print('this is a single strategy')
+		results[strategy] = getattr(strategies, strategy).main(stock, date)
 	return jsonify(results)
 
 
@@ -69,11 +69,11 @@ def runBacktest():
 	data = request.get_json()
 	stock = data['stock']
 	cash = 10000.00
-	indicators = data['indicators']
+	strategies = data['strategies']
 	endDate = datetime.now()
 	startDate = endDate - dateutil.relativedelta.relativedelta(weeks=data['length'])
 	# get results
-	results = backtest.RunBacktest.main(stock, indicators, startDate, endDate, cash)
+	results = backtest.RunBacktest.main(stock, strategies, startDate, endDate, cash)
 	# return results
 	return results
 

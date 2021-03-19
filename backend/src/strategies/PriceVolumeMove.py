@@ -6,7 +6,7 @@ import dateutil.relativedelta
 import requests
 import json
 from decimal import Decimal
-from indicators import VolumeUp
+from strategies import VolumeUp
 
 
 def max(numbers):

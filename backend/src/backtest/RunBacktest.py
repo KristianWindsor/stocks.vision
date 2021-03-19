@@ -2,7 +2,7 @@
 import os, json, requests
 import pymysql
 from datetime import datetime, date, timedelta
-import indicators
+import strategies
 from celery import Celery
 
 cel = Celery('celery_blog', broker='redis://localhost:6379/0')
@@ -51,7 +51,7 @@ def getStockPrice(ticker, date):
 		return None
 
 
-def main(stock, indicatorSettings, startDate, endDate, cash):
+def main(stock, strategySettings, startDate, endDate, cash):
 	db = pymysql.connect(
 		host=os.environ['MYSQL_HOSTNAME'],
 		user='backend',
@@ -62,13 +62,13 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 	cursor = db.cursor(pymysql.cursors.DictCursor)
 	
 	results = {
-		'indicators': indicatorSettings,
+		'strategies': strategySettings,
 		'chartData': {},
 		'transactions': [],
 		'gain': 0
 	}
 	print(stock)
-	print(indicatorSettings)
+	print(strategySettings)
 	print(startDate)
 	print(endDate)
 	print(cash)
@@ -97,20 +97,20 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 	for row in cursor.fetchall():
 		stockPrices[stock][row['date'].strftime('%Y-%m-%d')] = row['close_price']
 
-	# get average indicator value
-	indicatorChartData = {}
-	averageIndicatorValues = {}
+	# get average strategy value
+	strategyChartData = {}
+	averageStrategyValues = {}
 	for i in range(delta.days + 1):
 		date = (startDate + timedelta(days=i))
 		dateString = date.strftime('%Y-%m-%d')
 		if date.weekday() < 5 and date.strftime(dateString) in stockPrices[stock]:
-			indicatorData = getIndicatorValues(stock, indicatorSettings, date, cash)
-			indicatorChartData[dateString] = indicatorData['indicatorChartData']
-			averageIndicatorValues[dateString] = indicatorData['averageIndicatorValue']
+			strategyData = getStrategyValues(stock, strategySettings, date, cash)
+			strategyChartData[dateString] = strategyData['strategyChartData']
+			averageStrategyValues[dateString] = strategyData['averageStrategyValue']
 	
 	# run backtest
-	print(averageIndicatorValues)
-	print(indicatorChartData)
+	print(averageStrategyValues)
+	print(strategyChartData)
 	startStockPrice = getStockPrice(stock, startDate)
 	portfolio = { 'cash': cash }
 	if stock not in portfolio:
@@ -119,7 +119,7 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			'shorting': []
 		}
 	
-	for dateString in averageIndicatorValues:
+	for dateString in averageStrategyValues:
 		date = datetime.strptime(dateString, '%Y-%m-%d')
 		# print(stockPrices)
 		stockPrice = float(stockPrices[stock][dateString])
@@ -128,7 +128,7 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			fundsAllocated -= stockPrice
 			fundsAllocated += shortedPrice
 		quantityPossible = int(fundsAllocated / stockPrice)
-		quantityShouldHave = int(quantityPossible * averageIndicatorValues[dateString])
+		quantityShouldHave = int(quantityPossible * averageStrategyValues[dateString])
 		currentQuantity = portfolio[stock]['shares'] - len(portfolio[stock]['shorting'])
 		quantityToMove = quantityShouldHave - currentQuantity
 		if quantityToMove > 0:
@@ -163,7 +163,7 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 			'stockPrice': stockPrice,
 			'stockPricePercent': stockPrice / startStockPrice * 100 - 100,
 			'stockQuantity': portfolio[stock]['shares'] - len(portfolio[stock]['shorting']),
-			'indicators': indicatorChartData[date.strftime('%Y-%m-%d')]
+			'strategies': strategyChartData[date.strftime('%Y-%m-%d')]
 		}
 		
 	#
@@ -180,20 +180,20 @@ def main(stock, indicatorSettings, startDate, endDate, cash):
 
 
 @cel.task
-def getIndicatorValues(stock, indicatorSettings, date, cash):
-	averageIndicatorValue = 0
+def getStrategyValues(stock, strategySettings, date, cash):
+	averageStrategyValue = 0
 	numerator = 0
 	denominator = 0
-	indicatorChartData = {}
-	for indicatorName in indicatorSettings:
-		indicatorValue = float(getattr(indicators, indicatorName).main(stock, date.strftime('%Y-%m-%d')))
-		weight = indicatorSettings[indicatorName]
-		numerator += indicatorValue * weight
+	strategyChartData = {}
+	for strategyName in strategySettings:
+		strategyValue = float(getattr(strategies, strategyName).main(stock, date.strftime('%Y-%m-%d')))
+		weight = strategySettings[strategyName]
+		numerator += strategyValue * weight
 		denominator += abs(weight)
-		indicatorChartData[indicatorName] = indicatorValue * weight
+		strategyChartData[strategyName] = strategyValue * weight
 	if denominator != 0:
-		averageIndicatorValue = (numerator / denominator) * 0.01 
+		averageStrategyValue = (numerator / denominator) * 0.01 
 	return {
-		'averageIndicatorValue': averageIndicatorValue,
-		'indicatorChartData': indicatorChartData
+		'averageStrategyValue': averageStrategyValue,
+		'strategyChartData': strategyChartData
 	}

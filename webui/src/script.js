@@ -10,8 +10,8 @@ var settings = {
 	backtest: {
 		length: 4
 	},
-	indicators: { /*
-		indicatorName: {
+	strategies: { /*
+		strategyName: {
 			isEnabled: true,
 			value: 0.618,
 			weight: 5 
@@ -21,13 +21,13 @@ var settings = {
 };
 var backtestData = { /*
 	stockID: {
-		indicatorConfigID: {
+		strategyConfigID: {
 			backtestDuration: data
 		}
 	} */
 };
 
-var chartIndicators,
+var chartStrategies,
 	chartHoldings,
 	chartPrices;
 
@@ -44,7 +44,7 @@ function initializeHTML() {
 	$('#stock').val(settings.stock.ticker);
 	$('#spendableCash').val(settings.spendableCash);
 	$('.tp' + settings.backtest.length.toString()).addClass('picked');
-	GETindicator(settings.stock.ticker, '*');
+	GETstrategy(settings.stock.ticker, '*');
 	$.ajax({
 		type: 'GET',
 		url: API_URL + '/tickerlist',
@@ -123,26 +123,26 @@ function initializeHTML() {
 		},
 		options: chartOptions('holdings')
 	});
-	var canvasIndicators = document.getElementById("chartIndicators");
-	chartIndicators = new Chart(canvasIndicators.getContext("2d"), {
+	var canvasStrategies = document.getElementById("chartStrategies");
+	chartStrategies = new Chart(canvasStrategies.getContext("2d"), {
 		type: 'line',
 		data: {
 			datasets: []
 		},
-		options: chartOptions('indicators')
+		options: chartOptions('strategies')
 	});
 }
 
 
 function doMath() {
-	// average indicator values
+	// average strategy values
 	var numerator = 0,
 		denominator = 0;
-	for (var indicatorName in settings.indicators) {
-		if (settings.indicators.hasOwnProperty(indicatorName)) {
-			var value = settings.indicators[indicatorName].value,
-				weight = settings.indicators[indicatorName].weight,
-				isEnabled = settings.indicators[indicatorName].isEnabled;
+	for (var strategyName in settings.strategies) {
+		if (settings.strategies.hasOwnProperty(strategyName)) {
+			var value = settings.strategies[strategyName].value,
+				weight = settings.strategies[strategyName].weight,
+				isEnabled = settings.strategies[strategyName].isEnabled;
 			if (isEnabled && weight > 0 && value) {
 				numerator += value * weight;
 				denominator += weight;
@@ -152,10 +152,10 @@ function doMath() {
 
 	if (denominator > 0) {
 		$('.fourth.output h2').html('Results for ' + settings.stock.ticker);
-		var averageIndicatorValue = numerator / denominator;
-		$('#averageIndicatorValue').html((Math.round(averageIndicatorValue * 10) / 10) + '%');
+		var averageStrategyValue = numerator / denominator;
+		$('#averageStrategyValue').html((Math.round(averageStrategyValue * 10) / 10) + '%');
 		// multiply by money
-		var cashToSpend = parseFloat($('#spendableCash').val().replace(/\D/g,'')) * (averageIndicatorValue / 100);
+		var cashToSpend = parseFloat($('#spendableCash').val().replace(/\D/g,'')) * (averageStrategyValue / 100);
 		cashToSpend = Math.round(cashToSpend * 100) / 100
 		$('#cashToSpend').html('$' + cashToSpend);
 		// divide to get stocks
@@ -170,28 +170,28 @@ function doMath() {
 		}
 		$('#theMove').html(numberOfStocksToBuyText);
 	} else {
-		$('#averageIndicatorValue').html('0%');
+		$('#averageStrategyValue').html('0%');
 		$('#cashToSpend').html('$0');
 		$('#theMove').html('Nothing.');
 	}
 }
 
-function indicatorWeightChanged(indicatorName) {
+function strategyWeightChanged(strategyName) {
 	// get values
-	var indicatorValue = parseFloat($('.' + indicatorName + ' .indicatorValue').html());
-	var trackbarValue = parseFloat($('#' + indicatorName).val());
+	var strategyValue = parseFloat($('.' + strategyName + ' .strategyValue').html());
+	var trackbarValue = parseFloat($('#' + strategyName).val());
 	// update values
-	settings.indicators[indicatorName].weight = trackbarValue;
-	$('.' + indicatorName + ' .trackbarValue').html(trackbarValue);
+	settings.strategies[strategyName].weight = trackbarValue;
+	$('.' + strategyName + ' .trackbarValue').html(trackbarValue);
 	backtest();
 	doMath();
 }
-function indicatorEnabledChanged(indicatorName) {
-	if ($('.' + indicatorName + ' input[type="checkbox"]').is(':checked')) {
-		GETindicator(settings.stock.ticker, indicatorName)
-		settings.indicators[indicatorName].isEnabled = true;
+function strategyEnabledChanged(strategyName) {
+	if ($('.' + strategyName + ' input[type="checkbox"]').is(':checked')) {
+		GETstrategy(settings.stock.ticker, strategyName)
+		settings.strategies[strategyName].isEnabled = true;
 	} else {
-		settings.indicators[indicatorName].isEnabled = false;
+		settings.strategies[strategyName].isEnabled = false;
 		backtest();
 	}
 	doMath();
@@ -201,48 +201,48 @@ function stockInputChanged() {
 	var stock = $('#stock').val().toUpperCase();
 	if (listOfAllStocks.indexOf(stock) !== -1 && settings.stock.ticker !== stock) {
 		settings.stock.ticker = stock;
-		GETindicator(stock, '*');
+		GETstrategy(stock, '*');
 	}
 }
-function GETindicator(stock, indicator) {
+function GETstrategy(stock, strategy) {
 	$.ajax({
 		type: 'POST',
-		url: API_URL + '/indicator',
+		url: API_URL + '/strategy',
 		data: JSON.stringify({ 
-			'indicator': indicator,
+			'strategy': strategy,
 			'stock': stock,
 			'date': today
 		}),
 		contentType: "application/json",
 		success: function(returnData){
-			Object.keys(returnData).forEach(function(indicatorName) {
+			Object.keys(returnData).forEach(function(strategyName) {
 				// update value
-				if (!settings.indicators.hasOwnProperty(indicatorName)) {
-					settings.indicators[indicatorName] = {
+				if (!settings.strategies.hasOwnProperty(strategyName)) {
+					settings.strategies[strategyName] = {
 						isEnabled: true,
-						value: returnData[indicatorName],
+						value: returnData[strategyName],
 						weight: 1
 					};
 				} else {
-					settings.indicators[indicatorName].value = returnData[indicatorName];
+					settings.strategies[strategyName].value = returnData[strategyName];
 				}
 				// populate html
-				if (!$('.'+indicatorName).length) {
+				if (!$('.'+strategyName).length) {
 					var checkboxMaybeChecked = '';
-					if (settings.indicators[indicatorName].isEnabled == true) {
+					if (settings.strategies[strategyName].isEnabled == true) {
 						checkboxMaybeChecked = 'checked="checked"';
 					}
 					var html = `
-						<div class="`+indicatorName+`">
-							<input type="checkbox" onchange="indicatorEnabledChanged('`+indicatorName+`')" `+checkboxMaybeChecked+` /><br>
-							`+indicatorName+`
-							<input id="`+indicatorName+`" type="range" min="-5" max="5" value="`+settings.indicators[indicatorName].weight+`" oninput="indicatorWeightChanged('`+indicatorName+`');" />
-							<span class="indicatorValue">`+(Math.round(returnData[indicatorName] * 10) / 10)+`%</span> * <span class="trackbarValue">`+settings.indicators[indicatorName].weight+`</span>
+						<div class="`+strategyName+`">
+							<input type="checkbox" onchange="strategyEnabledChanged('`+strategyName+`')" `+checkboxMaybeChecked+` /><br>
+							`+strategyName+`
+							<input id="`+strategyName+`" type="range" min="-5" max="5" value="`+settings.strategies[strategyName].weight+`" oninput="strategyWeightChanged('`+strategyName+`');" />
+							<span class="strategyValue">`+(Math.round(returnData[strategyName] * 10) / 10)+`%</span> * <span class="trackbarValue">`+settings.strategies[strategyName].weight+`</span>
 						</div>
 					`;
-					$('.fourth.indicators').append(html);
+					$('.fourth.strategies').append(html);
 				} else {
-					$('.'+indicatorName+' .indicatorValue').html((Math.round(returnData[indicatorName] * 10) / 10) + '%');
+					$('.'+strategyName+' .strategyValue').html((Math.round(returnData[strategyName] * 10) / 10) + '%');
 				}
 			});
 			// update math
@@ -253,65 +253,65 @@ function GETindicator(stock, indicator) {
 	});
 }
 
-function generateIndicatorConfigID(indicators) {
-	var indicatorConfigID = '';
-	for (var indicatorName in indicators) {
-		if (indicators.hasOwnProperty(indicatorName)) {
-			if (indicators[indicatorName] != 0) {
-				indicatorConfigID += indicatorName;
-				if (indicators.length != 1) {
-					indicatorConfigID += indicators[indicatorName];
+function generateStrategyConfigID(strategies) {
+	var strategyConfigID = '';
+	for (var strategyName in strategies) {
+		if (strategies.hasOwnProperty(strategyName)) {
+			if (strategies[strategyName] != 0) {
+				strategyConfigID += strategyName;
+				if (strategies.length != 1) {
+					strategyConfigID += strategies[strategyName];
 				}
 			}
 		}
 	}
-	return indicatorConfigID;
+	return strategyConfigID;
 }
-function getIndicatorSettings() {
-	var indicatorSettings = {};
-	for (var key in settings.indicators) {
-		if (settings.indicators.hasOwnProperty(key)) {
-			if (settings.indicators[key]['isEnabled'] && settings.indicators[key]['weight'] != 0) {
-				indicatorSettings[key] = settings.indicators[key]['weight'];
+function getStrategySettings() {
+	var strategySettings = {};
+	for (var key in settings.strategies) {
+		if (settings.strategies.hasOwnProperty(key)) {
+			if (settings.strategies[key]['isEnabled'] && settings.strategies[key]['weight'] != 0) {
+				strategySettings[key] = settings.strategies[key]['weight'];
 			}
 		}
 	}
-	return indicatorSettings;
+	return strategySettings;
 }
 
 
 function backtest() {
 	var stock = settings.stock.ticker,
 		length = settings.backtest.length,
-		indicatorSettings = getIndicatorSettings(),
-		indicatorConfigID = generateIndicatorConfigID(indicatorSettings);
+		strategySettings = getStrategySettings(),
+		strategyConfigID = generateStrategyConfigID(strategySettings);
 
 	if (!backtestData.hasOwnProperty(stock)) {
 		backtestData[stock] = {};
 	}
-	if (!backtestData[stock].hasOwnProperty(indicatorConfigID)) {
-		backtestData[stock][indicatorConfigID] = {};
+	if (!backtestData[stock].hasOwnProperty(strategyConfigID)) {
+		backtestData[stock][strategyConfigID] = {};
 	}
-	if (!backtestData[stock][indicatorConfigID].hasOwnProperty(length)) {
-		backtestData[stock][indicatorConfigID][length] = {};
+	if (!backtestData[stock][strategyConfigID].hasOwnProperty(length)) {
+		backtestData[stock][strategyConfigID][length] = {};
 	}
-	if (Object.entries(backtestData[stock][indicatorConfigID][length]).length === 0) {
+	if (Object.entries(backtestData[stock][strategyConfigID][length]).length === 0) {
 		$.ajax({
 			type: 'POST',
 			url: API_URL + '/backtest',
 			data: JSON.stringify({ 
 				'stock': stock,
 				'length': length, 
-				'indicators': indicatorSettings
+				'strategies': strategySettings
 			}),
 			contentType: "application/json",
 			success: function(returnData){
-				backtestData[stock][indicatorConfigID][length] = returnData;
+				backtestData[stock][strategyConfigID][length] = returnData;
 				renderChart(returnData);
 			}
 		});
 	} else {
-		renderChart(backtestData[stock][indicatorConfigID][length]);
+		renderChart(backtestData[stock][strategyConfigID][length]);
 	}
 }
 
@@ -330,8 +330,8 @@ function renderChart(allData) {
 	var chartData = [],
 		stockChartData = [],
 		stockQuantityData = [],
-		indicatorDataSets = [],
-		indicatorData = {};
+		strategyDataSets = [],
+		strategyData = {};
 	for (var key in allData['chartData']) {
 		if (allData['chartData'].hasOwnProperty(key)) {
 			chartData.push({
@@ -347,25 +347,25 @@ function renderChart(allData) {
 				y: allData['chartData'][key]['stockQuantity']
 			});
 			
-			for (var indicatorName in allData['chartData'][key]['indicators']) {
-				if (allData['chartData'][key]['indicators'].hasOwnProperty(indicatorName)) {
-					if (!indicatorData[indicatorName]) {
-						indicatorData[indicatorName] = [];
+			for (var strategyName in allData['chartData'][key]['strategies']) {
+				if (allData['chartData'][key]['strategies'].hasOwnProperty(strategyName)) {
+					if (!strategyData[strategyName]) {
+						strategyData[strategyName] = [];
 					}
-					indicatorData[indicatorName].push({
+					strategyData[strategyName].push({
 						x: new Date(key),
-						y: allData['chartData'][key]['indicators'][indicatorName]
+						y: allData['chartData'][key]['strategies'][strategyName]
 					});
 				}
 			}
 		}
 	}
-	for (var indicatorName in allData['indicators']) {
-		if (allData['indicators'].hasOwnProperty(indicatorName)) {
+	for (var strategyName in allData['strategies']) {
+		if (allData['strategies'].hasOwnProperty(strategyName)) {
 			var color = randomNum(0,255) + ', ' + randomNum(0,255) + ', ' + randomNum(0,255)
-			indicatorDataSets.push({
-				label: indicatorName,
-				data: indicatorData[indicatorName],
+			strategyDataSets.push({
+				label: strategyName,
+				data: strategyData[strategyName],
 				backgroundColor: 'rgb('+color+', 0.2)',
 				borderColor: 'rgb('+color+', 1)'
 			});
@@ -388,9 +388,9 @@ function renderChart(allData) {
 	chartHoldings.data.datasets[0].label = settings.stock.ticker + ' Shares';
 	chartHoldings.data.datasets[0].data = stockQuantityData;
 	chartHoldings.update();
-	chartIndicators.options.scales.xAxes[0].time.unit = timeUnit;
-	chartIndicators.data.datasets = indicatorDataSets;
-	chartIndicators.update();
+	chartStrategies.options.scales.xAxes[0].time.unit = timeUnit;
+	chartStrategies.data.datasets = strategyDataSets;
+	chartStrategies.update();
 }
 
 
